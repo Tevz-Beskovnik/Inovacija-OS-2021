@@ -57,4 +57,5 @@
 
 ## address space in relation to tetris os comments
 
- - **
+ - **0x0000 - 0x1000** address space taken up by bootsector 512 bytes -> 4096 bits (0x1000 thats why)
+ - **0x1000 - 0x...** address space taken up by kernel (loaded in right after bootsector)
