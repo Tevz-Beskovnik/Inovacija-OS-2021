@@ -42,18 +42,22 @@ BOOTLOADER_OBJ = $(BOOTLOADER_SOURCE:.S=.o)
 
 #KERNEL_OBJ = $(KERNEL_C_FILES:.c=.o) $(KERNEL_S_FILES:.S=.o)
 
+#create the binaries and the system image
 BOOTSECTOR=bootsector.bin
-KERNEL=kernel.bin
+# KERNEL=kernel.bin
 ISO=boot.iso
 
+# all targets before iso
 all: dirs bootsector #kernel
 
+# cleans the previous compilation
 clear:
 	rm -f ./**/*.o
 	rm -f ./*.iso
 	rm -f ./**/*.bin
 	rm -f ./**/*.elf
 
+# creates dependant object files from the c files
 #%.o: %.c
 #	$(CC) -o $@ -c $< $(GFLAGS) $(CCFLAGS)
 
@@ -63,9 +67,11 @@ clear:
 dirs:
 	mkdir -p bin
 
+# links the bootsector and makes the first address 0x7C00
 bootsector:
 	$(LD) -o ./bin/$(BOOTSECTOR) $^ -Ttext 0x7C00 --oformat=binary
 
+#links the kernel with the linker script
 #kernel:
 #	 $(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/link.ld
 
