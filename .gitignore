@@ -9,3 +9,16 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
+
+# system image file
+*.iso
+
+#object files
+*.o
+
+#dynamic link libs
+*.dll
+
+#executables
+*.exe
+
