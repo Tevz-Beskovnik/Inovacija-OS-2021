@@ -68,7 +68,7 @@ dirs:
 	mkdir -p bin
 
 # links the bootsector and makes the first address 0x7C00
-bootsector:
+bootsector: $(BOOTLOADER_OBJ)
 	$(LD) -o ./bin/$(BOOTSECTOR) $^ -Ttext 0x7C00 --oformat=binary
 
 #links the kernel with the linker script
