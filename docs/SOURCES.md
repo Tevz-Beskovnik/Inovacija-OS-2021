@@ -14,3 +14,4 @@
  - **Master boot record**: https://en.wikipedia.org/wiki/Master_boot_record *6. 10. 2021*
  - **Makefile tutorial**: https://makefiletutorial.com/ *6. 10. 2021*
  - **Bootloader but in nasm**: https://github.com/FRosner/FrOS/blob/minimal-c-kernel/mbr.asm *7. 10. 2021*
+ - **Writting a simple operating system - from scratch**: https://github.com/shekohex/my-free-eBooks/blob/master/System-Design/OS-Dev.pdf *11. 10. 2021*
