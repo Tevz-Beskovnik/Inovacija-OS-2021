@@ -222,12 +222,38 @@ kernel_offset:
 disk_location:
     .word 0x00 /* written so that 0x00 is default drive A location */
 
+/* GDT - global descriptor table -> splits working memory into chunks (segment descriptors) */
+/* that descripbe a space of memory that runst data / code in a 8bit segment with diffrent privlages*/
+
 gdt_start:
-gdt_null:
+gdt_null: /* null segment descriptor first segment of gdt  */ 
     .quad 0
 gdt_code:
-    
+    /*
+        base =0x0 , limit =0 xfffff ,
+        1st flags : ( present )1 ( privilege )00 ( descriptor type )1 -> 1001 b
+        type flags : ( code )1 ( conforming )0 ( readable )1 ( accessed )0 -> 1010 b
+        2nd flags : ( granularity )1 (32 - bit default )1 (64 - bit seg )0 ( AVL )0 -> 1100 b
+    */
+    .word 0xffff /* limit bits 0 - 15 */
+    .word 0x0 /* base bits 0 - 15*/
+    .byte 0x0 /* base bits 16 - 23*/
+    .byte 0b10011010 /* first flag + type flag */
+    .byte 0b11001111 /* second flag, limit bits 16 - 19 */
+    .byte 0x0 /* base bits 24 - 31*/
+    /* sums up to 32 bits */
+gdt_data:
+    .word 0xffff
+    .word 0x0
+    .byte 0x0
+    .byte 0b10010010 /* type flags : ( code )0 ( expand down )0 ( writable )1 ( accessed )0 */
+    .byte 0b11001111
+    .byte 0x0
+gdt_end:
 
+idt:
+    .word 0x0
+    .long 0x0
 
 /* MBR boot signature */
 .fill 510-(.-_start), 1, 0
