@@ -4,12 +4,14 @@ ENAME = $(shell uname)
 
 ifeq ($(ENAME), Linux)
 	CC = gcc -elf_i386
-	AS = as --32
+	AS = nasm -f elf32
 	LD = ld -m elf_i386
+	MAKE = make
 else
 	CC=i386-elf-gcc
 	AS=i386-elf-as
 	LD=i386-elf-ld
+	MAKE = make
 endif
 
 # set compiler flags for linker, c, cpp, assembly compiler
@@ -22,13 +24,13 @@ CCFLAGS+=-fno-builtin-function -fno-builtin
 ASFLAGS=
 LDFLAGS=
 
-# set source file for bootsector
+# makefile location of the bootloader
 
-BOOTLOADER_SOURCE = src/bootloader.S
+BOOTLOADER_MAKE = ./src/bootloader
 
-# create bootsector object file
+# create bootsector object file made in BOOTLOADER_MAKE
 
-BOOTLOADER_OBJ = $(BOOTLOADER_SOURCE:.S=.o)
+BOOTLOADER_OBJ = $(wildcard src/bootloader/bootloader.o)
 
 # object files for kernal (commented for right now)
 
@@ -48,7 +50,7 @@ BOOTSECTOR=bootsector.bin
 ISO=boot.iso
 
 # all targets before iso
-all: dirs bootsector #kernel
+all: dirs objects bootsector #kernel
 
 # cleans the previous compilation
 clear:
@@ -61,8 +63,10 @@ clear:
 #%.o: %.c
 #	$(CC) -o $@ -c $< $(GFLAGS) $(CCFLAGS)
 
-%.o: %.S
-	$(AS) -o $@ -c $< $(GFLAGS) $(ASFLAGS)
+#%.o: %.asm
+#	$(AS) $< -o $@x
+objects:
+	$(MAKE) -C $(BOOTLOADER_MAKE)
 
 dirs:
 	mkdir -p bin
@@ -75,7 +79,7 @@ bootsector: $(BOOTLOADER_OBJ)
 #kernel:
 #	 $(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/link.ld
 
-iso: dirs bootsector #kernal
+iso: dirs objects bootsector #kernal
 	dd if=/dev/zero of=$(ISO) bs=512 count=2880
 	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 count=1
 #    dd if=./bin/$(KERNEL) of=$(ISO) bs=512 count=2048

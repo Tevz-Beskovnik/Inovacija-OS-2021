@@ -23,21 +23,6 @@ read_disk:
 
     push %dx
 
-    /*
-    params:
-    dl -> disk location 0x00
-    ah -> 0x02 -> read sectors
-    al -> sector to read
-    ch -> cylinder
-    dh -> head
-    es:bx -> buffer address pointer
-
-    res:
-    cf -> set on error clear on no error
-    ah -> return code
-    al -> actual sector read count
-    */
-
     movb $0x02, %ah
     movb $0x40, %al
     movb $0, %ch
