@@ -28,9 +28,15 @@ LDFLAGS=
 
 BOOTLOADER_MAKE = ./src/bootloader
 
+# location of the debug kernel
+
+#KERNEL_DEBUG_MAKE = ./src/kernel
+
 # create bootsector object file made in BOOTLOADER_MAKE
 
-BOOTLOADER_OBJ = $(wildcard src/bootloader/bootloader.o)
+BOOTLOADER_OBJ = src/bootloader/bootloader.o
+
+BOOTLOADER_EXTENDED_OBJ = src/bootloader/extendedSpace.o
 
 # object files for kernal (commented for right now)
 
@@ -42,19 +48,23 @@ BOOTLOADER_OBJ = $(wildcard src/bootloader/bootloader.o)
 
 # kernel object files
 
+#KERNEL_DEBUG_DEBUG = src/kernel/kernel.o
+
 #KERNEL_OBJ = $(KERNEL_C_FILES:.c=.o) $(KERNEL_S_FILES:.S=.o)
 
 #create the binaries and the system image
 BOOTSECTOR=bootsector.bin
-# KERNEL=kernel.bin
+BOOTSECTOR_EXTENDED=boot_extended.bin
+#KERNEL=kernel.bin
 ISO=boot.iso
 
 # all targets before iso
-all: dirs objects bootsector #kernel
+all: clear dirs objects bootsector bootsector_extended #kernel
 
 # cleans the previous compilation
 clear:
 	rm -f ./**/*.o
+	rm -f ./**/**/*.o
 	rm -f ./*.iso
 	rm -f ./**/*.bin
 	rm -f ./**/*.elf
@@ -67,19 +77,24 @@ clear:
 #	$(AS) $< -o $@x
 objects:
 	$(MAKE) -C $(BOOTLOADER_MAKE)
+#	$(MAKE) -C $(KERNEL_DEBUG_MAKE)
 
 dirs:
 	mkdir -p bin
 
 # links the bootsector and makes the first address 0x7C00
+bootsector_extended: $(BOOTLOADER_EXTENDED_OBJ)
+	$(LD) -o ./bin/$(BOOTSECTOR_EXTENDED) $^ -Ttext 0x7E00 --oformat=binary
+
 bootsector: $(BOOTLOADER_OBJ)
 	$(LD) -o ./bin/$(BOOTSECTOR) $^ -Ttext 0x7C00 --oformat=binary
 
 #links the kernel with the linker script
-#kernel:
-#	 $(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/link.ld
+#kernel: $(KERNEL_DEBUG_DEBUG)
+#	$(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/kernel/link.ld
 
-iso: dirs objects bootsector #kernal
-	dd if=/dev/zero of=$(ISO) bs=512 count=2880
-	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 count=1
-#    dd if=./bin/$(KERNEL) of=$(ISO) bs=512 count=2048
+iso: clear dirs objects bootsector bootsector_extended #kernel
+#    dd if=/dev/zero of=$(ISO) bs=512 count=2880
+	dd if=/dev/zero of=$(ISO) bs=512 count=5
+	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 seek=0 count=1
+	dd if=./bin/$(BOOTSECTOR_EXTENDED) of=$(ISO) bs=512 seek=1 count=4

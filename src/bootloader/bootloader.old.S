@@ -19,7 +19,7 @@ _start:
     call load_kernel
 
 read_disk:
-    pusha /* push all general purpouse registers onto the stack */
+    pusha 
 
     push %dx
 

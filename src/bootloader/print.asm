@@ -15,9 +15,5 @@ exit:
     ret
 
 boot_welcome:
-    db 'SFS booting', 0
-A20_done_str:
-    db 'A20 ENABLED', 0
-A20_fail_str:
-    db 'A20 NOT ENABLED', 0
+    db 'SFS booting', 0x0a, 0x0d, 0
 
