@@ -20,7 +20,7 @@ gdt_data:
     db 10010010b ; type flags : ( code )0 ( expand down )0 ( writable )1 ( accessed )0
     db 11001111b
     db 0x00
-gdt_end
+gdt_end:
     
 gdt_descriptor:
     gdt_size:

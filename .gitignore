@@ -16,5 +16,8 @@
 #elf files
 *.elf
 
+#unused files
+*.old
+
 #debug files
 **/**/*.sh

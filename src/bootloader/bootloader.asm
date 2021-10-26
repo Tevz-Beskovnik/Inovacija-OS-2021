@@ -9,20 +9,21 @@ _start:
 
     call load_extended
 
-    jmp EXTENDED_SPACE_OFFSET
+    call enter_protected_mode 
+
+    jmp $
 
 %include "print.asm"
+%include "protectedMode.asm"
 %include "read_disk.asm"
 
 load_extended:
-    mov bx, EXTENDED_SPACE_OFFSET
+    mov bx, KERNAL_OFFSET
     mov al, 4
     call read_disk
     ret
 
-KERNAL_OFFSET equ 0x1000
-
-EXTENDED_SPACE_OFFSET equ 0x7e00
+KERNAL_OFFSET equ 0x7e00
 
 DISK_NUM equ 0
 
