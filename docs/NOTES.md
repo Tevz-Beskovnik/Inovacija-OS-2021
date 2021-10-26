@@ -59,3 +59,7 @@
 
  - **0x0000 - 0x1000** address space taken up by bootsector 512 bytes -> 4096 bits (0x1000 thats why)
  - **0x1000 - 0x...** address space taken up by kernel (loaded in right after bootsector)
+
+## GDT - global descriptor table
+ - **memory segmentation** Code in one segment can be prohibited from executing code in a more privilidged segment, so you can protect your kernel code from user      applications
+ 

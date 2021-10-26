@@ -4,12 +4,14 @@ ENAME = $(shell uname)
 
 ifeq ($(ENAME), Linux)
 	CC = gcc -elf_i386
-	AS = as --32
+	AS = nasm -f elf32
 	LD = ld -m elf_i386
+	MAKE = make
 else
 	CC=i386-elf-gcc
 	AS=i386-elf-as
 	LD=i386-elf-ld
+	MAKE = make
 endif
 
 # set compiler flags for linker, c, cpp, assembly compiler
@@ -22,13 +24,17 @@ CCFLAGS+=-fno-builtin-function -fno-builtin
 ASFLAGS=
 LDFLAGS=
 
-# set source file for bootsector
+# makefile location of the bootloader
 
-BOOTLOADER_SOURCE = src/bootloader.S
+BOOTLOADER_MAKE = ./src/bootloader
 
-# create bootsector object file
+# location of the debug kernel
 
-BOOTLOADER_OBJ = $(BOOTLOADER_SOURCE:.S=.o)
+KERNEL_DEBUG_MAKE = ./src/kernel
+
+# create bootsector object file made in BOOTLOADER_MAKE
+
+BOOTLOADER_OBJ = src/bootloader/bootloader.o
 
 # object files for kernal (commented for right now)
 
@@ -40,19 +46,22 @@ BOOTLOADER_OBJ = $(BOOTLOADER_SOURCE:.S=.o)
 
 # kernel object files
 
+KERNEL_DEBUG_DEBUG = src/kernel/kernel.o
+
 #KERNEL_OBJ = $(KERNEL_C_FILES:.c=.o) $(KERNEL_S_FILES:.S=.o)
 
 #create the binaries and the system image
 BOOTSECTOR=bootsector.bin
-# KERNEL=kernel.bin
+KERNEL=kernel.bin
 ISO=boot.iso
 
 # all targets before iso
-all: dirs bootsector #kernel
+all: clear dirs objects bootsector kernel
 
 # cleans the previous compilation
 clear:
 	rm -f ./**/*.o
+	rm -f ./**/**/*.o
 	rm -f ./*.iso
 	rm -f ./**/*.bin
 	rm -f ./**/*.elf
@@ -61,21 +70,26 @@ clear:
 #%.o: %.c
 #	$(CC) -o $@ -c $< $(GFLAGS) $(CCFLAGS)
 
-%.o: %.S
-	$(AS) -o $@ -c $< $(GFLAGS) $(ASFLAGS)
+#%.o: %.asm
+#	$(AS) $< -o $@x
+objects:
+	$(MAKE) -C $(BOOTLOADER_MAKE)
+	$(MAKE) -C $(KERNEL_DEBUG_MAKE)
 
 dirs:
 	mkdir -p bin
 
-# links the bootsector and makes the first address 0x7C00
+# link the bootsector
 bootsector: $(BOOTLOADER_OBJ)
 	$(LD) -o ./bin/$(BOOTSECTOR) $^ -Ttext 0x7C00 --oformat=binary
 
-#links the kernel with the linker script
-#kernel:
-#	 $(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/link.ld
+# links the kernel with the linker script
+kernel: $(KERNEL_DEBUG_DEBUG)
+	$(LD) -o ./bin/$(KERNEL) $^ $(LDFLAGS) -Tsrc/kernel/link.ld
 
-iso: dirs bootsector #kernal
-	dd if=/dev/zero of=$(ISO) bs=512 count=2880
-	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 count=1
-#    dd if=./bin/$(KERNEL) of=$(ISO) bs=512 count=2048
+# copy all of the contetnts to the iso file
+iso: clear dirs objects bootsector kernel
+#    dd if=/dev/zero of=$(ISO) bs=512 count=2880
+	dd if=/dev/zero of=$(ISO) bs=512 count=5
+	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 seek=0 count=1
+	dd if=./bin/$(KERNEL) of=$(ISO) bs=512 seek=1 count=4
