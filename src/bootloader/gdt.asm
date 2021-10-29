@@ -29,3 +29,11 @@ gdt_descriptor:
 
 gdt_code_seg equ gdt_code - gdt_null
 gdt_data_seg equ gdt_data - gdt_null
+
+[bits 32]
+EditGDT:
+    mov [gdt_code + 6], byte 10101111b
+    mov [gdt_data + 6], byte 10101111b
+    ret
+
+[bits 16]

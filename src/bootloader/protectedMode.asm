@@ -1,7 +1,16 @@
 [bits 16]
 
+jmp enter_protected_mode
+
 %include "gdt.asm"
+%include "print.asm"
 %include "A20_line.asm"
+%include "print32.asm"
+%include "CPUID.asm"
+%include "longmode.asm"
+%include "simplePaging.asm"
+
+[bits 16]
 
 enter_protected_mode:
     call enable_A20 ; enable the A20 line (32 bit address line)
@@ -10,15 +19,33 @@ enter_protected_mode:
     mov eax, cr0 
     or eax, 1
     mov cr0, eax ; load bit of cr0 so it knows its in protected mode
-    jmp gdt_code_seg:start_protected_mode ; enter protected mode code located in gdt
+    jmp gdt_code_seg:start_protected_mode ; enter protected mode code located in gdt, far jump / flush
 
 [bits 32]
 start_protected_mode:
-    mov ax, gdt_data_seg ; far jump / flush
+    mov ax, gdt_data_seg ; segment setup
     mov ds, ax
     mov ss, ax
     mov es, ax
     mov fs, ax
     mov gs, ax
 
-    jmp gdt_code_seg:0x7e00 ; jump to where the kernel is located at in memory in gdt
+    call detect_CPUID
+
+    call check_long_mode
+
+    call setup_paging
+
+    call EditGDT
+
+    jmp gdt_code_seg:start_64_bit
+
+[bits 64]
+start_64_bit:
+    mov edi, 0xb8000
+    mov rax, 0x1f201f201f201f20
+    mov ecx, 500
+    rep stosq
+    jmp $
+
+times 2048 - ($-$$) db 0

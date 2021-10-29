@@ -16,3 +16,6 @@
  - **Bootloader but in nasm**: https://github.com/FRosner/FrOS/blob/minimal-c-kernel/mbr.asm *7. 10. 2021*
  - **Writting a simple operating system - from scratch**: https://github.com/shekohex/my-free-eBooks/blob/master/System-Design/OS-Dev.pdf *11. 10. 2021*
  - **Interrupt descriptor table**: https://wiki.osdev.org/Interrupt_Descriptor_Table *18. 10. 2021*
+ - **Entering 32 bit protected mode**: https://www.youtube.com/watch?v=pXzortxPZR8&t=5s *26. 10. 2021*
+ - **Entering long mode**: https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_the_64-bit_Submode *27. 10. 2021*
+ - **AMD64 architecture programers manual volume 2**: https://www.amd.com/system/files/TechDocs/24593.pdf *28. 10. 2021*

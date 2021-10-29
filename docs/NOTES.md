@@ -1,5 +1,10 @@
-
 # ASSEMBLY NOTES
+
+# NASM compiling
+
+ - **Makefile in directory** nasm should have makefile in directory since it pools the includes from inside of it
+
+# This is now mostly usless since NASM has actual good documentation
 
 ## global _start
 
@@ -10,6 +15,7 @@
  - **interupt handler** giver control to the interupt handler *0x80* is system call handler
  - **0x80** kernal system call interupt
  - **0x10** bios interupt https://en.wikipedia.org/wiki/INT_10H
+ - **0x13** another bios interupt call (for reading off of disk)
 
 ## sections
 
