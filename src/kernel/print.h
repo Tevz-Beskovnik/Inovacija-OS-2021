@@ -1,13 +1,18 @@
 #include "util.h"
+#include "io.h"
 
 #ifndef PRINT_H
 #define PRINT
 
-#define VGA_MEMORY (u8*) 0xb8000
+#define VGA_MEMORY 0xb8000
 
-u8 vmem_position = VGA_MEMORY;
+#define WIDHT 80
 
-void setCursorPos(u16 pos);
+void setMem();
+
+void setCursorPos(u8 x, u8 y);
+
+void setCursorPosSingle(u16);
 
 void print(const char*);
 
