@@ -3,8 +3,8 @@
 read_disk:
     ;params:
     ;dl -> disk location 0x00
-    ;ah -> 0x02 -> read sectors
-    ;al -> sector to read
+    ;ah -> 0x02 -> read sectors instruction for BIOS
+    ;al -> sectors to read
     ;ch -> cylinder
     ;dh -> head
     ;es:bx -> buffer address pointer
@@ -23,7 +23,7 @@ read_disk:
     int 0x13
     jc disk_error
 
-    cmp al, 4
+    cmp al, SECTORS_TO_READ
     jne disk_sector_error
 
     ret

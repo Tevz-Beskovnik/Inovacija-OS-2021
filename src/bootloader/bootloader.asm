@@ -21,18 +21,19 @@ _start:
     jmp 0x7e00
 
 %include "print.asm"
-;%include "protectedMode.asm"
 %include "read_disk.asm"
 
 load_extended:
-    mov bx, KERNAL_OFFSET
-    mov al, 4
+    mov bx, KERNEL_OFFSET
+    mov al, SECTORS_TO_READ
     call read_disk
     ret
 
-KERNAL_OFFSET equ 0x7e00 ; offset at witch the kernel is located at
+KERNEL_OFFSET equ 0x8000 ; offset at witch the kernel is located at
 
 DISK_NUM equ 0 ; number of the disk
+
+SECTORS_TO_READ equ 4
 
 times 510 - ($-$$) db 0 ; fill the rest of the bootsector till its 512 bytes
 dw 0xaa55 ; magic boot number ;)

@@ -2,28 +2,48 @@ OUTPUT_FORMAT("binary")
 ENTRY(_start)
 SECTIONS
 {
-    . = 0x7e00;
+    . = 0x8000;
 
-    .text BLOCK(4K) : ALIGN(4K)
+    .text : AT(ADDR(.text) - 0x8000)
     {
-        *(.text.prologue)
+        _code = .;
         *(.text)
+        *(.rodata*)
+        . = ALIGN(4K);
     }
 
-    .rodata BLOCK(4K) : ALIGN(4K)
-    {
-        *(.rodata)
-    }
-
-    .data BLOCK(4K) : ALIGN(4K)
-    {
+   .data : AT(ADDR(.data) - 0x8000)
+   {
+        _data = .;
         *(.data)
-    }
+        . = ALIGN(4K);
+   } 
 
-    .bss BLOCK(4K) : ALIGN(4K)
-    {
-        *(.bss)
-    }
+   .eh_frame : AT(ADDR(.eh_frame) - 0x8000)
+   {
+       _ehframe = .;
+       *(.eh_frame)
+        . = ALIGN(4K);
+   }
 
-    end = .;
+   .bss : AT(ADDR(.bss) - 0x8000)
+   {
+       _bss = .;
+       *(.bss)
+
+       /*
+        * You usually need to include generated COMMON symbols
+        * under kernel BSS section or use gcc's -fno-common
+        */
+
+        *(COMMON)
+       . = ALIGN(4K);
+   }
+
+   _end = .;
+
+   /DISCARD/ :
+   {
+        *(.comment)
+   }
 }

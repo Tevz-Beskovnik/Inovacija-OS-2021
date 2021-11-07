@@ -1,6 +1,15 @@
 [bits 16]
+segment .text
 
-jmp enter_protected_mode
+global _start
+_start: 
+    call enable_A20 ; enable the A20 line (32 bit address line)
+    cli 
+    lgdt [gdt_descriptor] ; enable gdt
+    mov eax, cr0 
+    or eax, 1
+    mov cr0, eax ; load bit of cr0 so it knows its in protected mode
+    jmp gdt_code_seg:start_protected_mode ; enter protected mode code located in gdt, far jump / flush
 
 %include "gdt.asm"
 %include "print.asm"
@@ -9,17 +18,6 @@ jmp enter_protected_mode
 %include "CPUID.asm"
 %include "longmode.asm"
 %include "simplePaging.asm"
-
-[bits 16]
-
-enter_protected_mode:
-    call enable_A20 ; enable the A20 line (32 bit address line)
-    cli 
-    lgdt [gdt_descriptor] ; enable gdt
-    mov eax, cr0 
-    or eax, 1
-    mov cr0, eax ; load bit of cr0 so it knows its in protected mode
-    jmp gdt_code_seg:start_protected_mode ; enter protected mode code located in gdt, far jump / flush
 
 [bits 32]
 start_protected_mode:
@@ -41,11 +39,12 @@ start_protected_mode:
     jmp gdt_code_seg:start_64_bit
 
 [bits 64]
+[extern _main]
+
 start_64_bit:
     mov edi, 0xb8000
-    mov rax, 0x1f201f201f201f20
+    mov rax, 0x0000000000000000
     mov ecx, 500
     rep stosq
-    jmp $
-
-times 2048 - ($-$$) db 0
+    call _main ; external function in our kernel
+    jmp $ ; if the kernel ever gives control back to bootloader

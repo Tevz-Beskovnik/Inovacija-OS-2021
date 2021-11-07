@@ -1,8 +1,8 @@
-AS = nasm -f elf32
+AS = nasm -f elf64
 
 # get KERNEL assembly sources
 
-KERNEL_SOURCE_ASM = $(wildcard kernel.asm)
+KERNEL_SOURCE_ASM = $(wildcard protectedMode.asm)
 
 # get kernel c sources
 
@@ -12,7 +12,7 @@ KERNEL_OBJS = $(KERNEL_SOURCE_ASM:.asm=.o) #$(KERNEL_SOURCE_C:.c=.o)
 
 # do everything
 
-all: kernel.o
+all: protectedMode.o
 
 %.o: %.asm
 	$(AS) $< -o $@
