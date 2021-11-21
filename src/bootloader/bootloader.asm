@@ -33,7 +33,7 @@ KERNEL_OFFSET equ 0x8000 ; offset at witch the kernel is located at
 
 DISK_NUM equ 0 ; number of the disk
 
-SECTORS_TO_READ equ 4
+SECTORS_TO_READ equ 7
 
 times 510 - ($-$$) db 0 ; fill the rest of the bootsector till its 512 bytes
 dw 0xaa55 ; magic boot number ;)

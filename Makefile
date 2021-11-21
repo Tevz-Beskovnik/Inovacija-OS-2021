@@ -16,11 +16,10 @@ endif
 # set compiler flags for linker, c, cpp, assembly compiler
 
 GFLAGS=
-CCFLAGS=-m64 -std=c11 -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing -mno-red-zone
+CCFLAGS= -m64 -std=c11 -O2 -g -Wall -Wextra -Wpedantic -Wstrict-aliasing -mno-red-zone -march=x86-64
 CCFLAGS+=-Wno-pointer-arith -Wno-unused-parameter
 CCFLAGS+=-nostdlib -nostdinc -ffreestanding -fno-pie -fno-stack-protector
 CCFLAGS+=-fno-builtin-function -fno-builtin
-CXXFLAGS=-ffreestanding -mno-red-zone -m64 -std=c11 -nostdlib -nostdinc -fno-pie -fno-stack-protector -fno-builtin-function -fno-builtin
 ASFLAGS=
 LDFLAGS=
 
@@ -30,13 +29,19 @@ BOOTLOADER_MAKE = ./src/bootloader
 
 # location of the debug kernel
 
-KERNEL_MAKE = ./src/kernel
+KERNEL_MAKE = ./src/kernel/kernel_asm
 
 # create bootsector object file made in BOOTLOADER_MAKE
 
 BOOTLOADER_OBJ = src/bootloader/bootloader.o
 
-BOOTLOADER_EXT_OBJ = src/kernel/protectedMode.o
+# extended boot enables long mode and 32bit real mode
+
+BOOTLOADER_EXT_OBJ = src/kernel/kernel_asm/protectedMode.o
+
+# external assembly objects
+
+KERNEL_ASM_OBJ = src/kernel/kernel_asm/binaries.o
 
 # object files for kernal (commented for right now)
 
@@ -50,7 +55,7 @@ KERNEL_CPP_FILES = $(wildcard src/kernel/*.c)
 
 #KERNEL_DEBUG_DEBUG = src/kernel/kernel.o
 
-KERNEL_OBJ = $(BOOTLOADER_EXT_OBJ) $(KERNEL_CPP_FILES:.c=.o)
+KERNEL_OBJ = $(BOOTLOADER_EXT_OBJ) $(KERNEL_CPP_FILES:.c=.o) $(KERNEL_ASM_OBJ)
 
 #create the binaries and the system image
 BOOTSECTOR=bootsector.bin
@@ -64,6 +69,7 @@ all: clear dirs objects bootsector kernel
 clear:
 	rm -f ./**/*.o
 	rm -f ./**/**/*.o
+	rm -f ./**/**/**/*.o
 	rm -f ./*.iso
 	rm -f ./**/*.bin
 	rm -f ./**/*.elf
@@ -95,6 +101,6 @@ kernel: $(KERNEL_OBJ)
 # copy all of the contetnts to the iso file
 iso: clear dirs objects bootsector kernel
 #    dd if=/dev/zero of=$(ISO) bs=512 count=2880
-	dd if=/dev/zero of=$(ISO) bs=512 count=9
+	dd if=/dev/zero of=$(ISO) bs=512 count=13
 	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 seek=0 count=1
-	dd if=./bin/$(KERNEL) of=$(ISO) bs=512 seek=1 count=8
+	dd if=./bin/$(KERNEL) of=$(ISO) bs=512 seek=1 count=12

@@ -11,15 +11,13 @@ eg. it must be dimensions of 0x00000000
 00 -> hex code of char
 */
 
-static u32* vmem_current;
-
-u32 cursorPos;
-
-u16 cursorX, cursorY;
-
-void setMem()
+void clearScreen(u8 color)
 {
-    vmem_current = (u32*)VGA_MEMORY;
+    u64 value = (color << 8) + (color << 24) + ((u64)color << 40) + ((u64)color << 56);
+    for(u64* i = (u64*)VGA_MEMORY; i < (u64*)(VGA_MEMORY + 4000); i++)
+    {
+        *i = value;
+    }
 }
 
 void setCursorPos(u8 x, u8 y)
@@ -36,29 +34,81 @@ void setCursorPosSingle(u16 pos)
     outb(0x3D5, (u8)(pos & 0xFF));
     outb(0x3D4, 0x0E);
     outb(0x3D5, (u8)((pos >> 8) & 0xFF));
-
-    vmem_current = (u32*)VGA_MEMORY + pos/2;
     cursorPos = pos;
 }
 
-void print(const char* string)
+void print(const char* string, u8 color)
 {
-    if(vmem_current < VGA_MEMORY)
-        setMem();
-    size_t size = strlen(string);
-    for(u32 i = 0; i < size; i+=2){
-        if(string[i] == 0x0A || string[i+1] == 0x0A)
-            setCursorPos(0, cursorY+1);
-        else {
-            int current = 0x00000000;
-            if(i+1 != size)
-                current += 0x0F00 + string[i+1];
+    u8* charPtr = (u8*)string;
+    u16 index = cursorPos;
 
-            current = current << 16;
-            current += 0x0F00 + string[i];
-
-            *vmem_current = current;
-            vmem_current += 1;
+    while(*charPtr != 0)
+    {
+        switch (*charPtr)
+        {
+            case 10:
+                index += WIDHT;
+                index -= index%WIDHT;
+                break;
+            case 13:
+                index -= index%WIDHT;
+                break;
+            default:
+                *(u16*)(VGA_MEMORY + index * 2) = (color << 8) + *charPtr;
+                index++;
         }
+        charPtr++;
     }
+    setCursorPosSingle(index);
+}
+
+void printChar(const char character, u8 color)
+{
+    u16 index = cursorPos;
+
+    *(u16*)(VGA_MEMORY + index * 2) = (color << 8) + character;
+    setCursorPosSingle(index + 1);
+}
+
+u32 getCursorPos(){
+    return cursorPos;
+}
+
+char outputHex[8];
+const char* hexToChar(u8 number)
+{
+    for(int i = 0; i < 2; i++)
+    { 
+        outputHex[1-i] = (unsigned char)(((unsigned int)number >> (4*i)) & 0x0f);
+        outputHex[1-i] += outputHex[1-i] > 9 ? 55 : 48;
+    }
+
+    return outputHex;
+}
+
+char outputInt[20];
+// function that returns the intager value in char pointer form for printing
+const char* intToChar (u64 number)
+{
+    // first we want to get how many chars the number will occupi
+    u8 size = 0;
+    u64 sizeTester = number;
+    while (sizeTester / 10 > 0)
+    {
+        sizeTester /= 10;
+        size++;
+    }
+
+    // then we want to fill the outputInt char array with the character intager values
+    u8 index = 0;
+    u64 newValue = number;
+    while (newValue*10 / 10 > 0)
+    {
+        u8 remain = newValue % 10;
+        newValue /= 10;
+        outputInt[size - index] = remain + 48;
+        index++;
+    }
+
+    return outputInt;
 }
