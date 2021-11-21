@@ -33,6 +33,7 @@ detect_CPUID:
 no_CPUID:
     mov esi, no_CPUID_message
     call print32
+    jmp $
 
 no_CPUID_message:
     db "CPUID not supported!", 0

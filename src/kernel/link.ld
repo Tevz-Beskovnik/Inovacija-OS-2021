@@ -1,3 +1,12 @@
+/*
+    now that i have a bit of a better understanding of whats going on here:
+    the linker script just basicly defines the places where diffrent sections are location (as the tag says)
+    and then points to the code and data segments inside of them (as far as i understand)
+    for example:
+        the .idt block is of size 0x1000 -> 4096 bits
+        and is also aligned to it
+*/
+
 OUTPUT_FORMAT("binary")
 ENTRY(_start)
 SECTIONS
@@ -10,6 +19,13 @@ SECTIONS
         *(.text)
         *(.rodata*)
         . = ALIGN(4K);
+    }
+
+    /* define the address of the iterupt descriptor table */
+    .idt BLOCK(0x1000) : ALIGN(0x1000)
+    {
+        _idt = .;
+        . = . + 0x1000;
     }
 
    .data : AT(ADDR(.data) - 0x8000)

@@ -2,7 +2,7 @@ AS = nasm -f elf64
 
 # get KERNEL assembly sources
 
-KERNEL_SOURCE_ASM = $(wildcard protectedMode.asm)
+KERNEL_SOURCE_ASM = $(wildcard protectedMode.asm binaries.asm)
 
 # get kernel c sources
 
@@ -12,7 +12,7 @@ KERNEL_OBJS = $(KERNEL_SOURCE_ASM:.asm=.o) #$(KERNEL_SOURCE_C:.c=.o)
 
 # do everything
 
-all: protectedMode.o
+all: protectedMode.o binaries.o
 
 %.o: %.asm
 	$(AS) $< -o $@
