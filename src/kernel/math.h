@@ -5,6 +5,8 @@
 
 int pow(int, int);
 
-int abs()
+int abs(int);
+
+i64 absL(i64);
 
 #endif

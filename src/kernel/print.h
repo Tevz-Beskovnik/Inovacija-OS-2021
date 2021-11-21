@@ -4,6 +4,7 @@
 #include "util.h"
 #include "io.h"
 #include "printColor.h"
+#include "math.h"
 
 #define VGA_MEMORY (u8*)0xb8000
 
@@ -27,6 +28,6 @@ u32 getCursorPos(void);
 
 const char* hexToChar(u8);
 
-const char* intToChar(u64);
+const char* intToChar(i64);
 
 #endif

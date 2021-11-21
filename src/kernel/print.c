@@ -88,23 +88,31 @@ const char* hexToChar(u8 number)
 
 char outputInt[20];
 // function that returns the intager value in char pointer form for printing
-const char* intToChar (u64 number)
+const char* intToChar (i64 number)
 {
+    i64 numb = number;
+    if(number < 0)
+        numb = absL(number);
     // first we want to get how many chars the number will occupi
-    u8 size = 0;
-    u64 sizeTester = number;
+    i8 size = 0;
+    i64 sizeTester = numb;
     while (sizeTester / 10 > 0)
     {
         sizeTester /= 10;
         size++;
     }
 
+    if(number < 0){
+        outputInt[0] = '-';
+        size++;
+    }
+
     // then we want to fill the outputInt char array with the character intager values
-    u8 index = 0;
-    u64 newValue = number;
+    i8 index = 0;
+    i64 newValue = numb;
     while (newValue*10 / 10 > 0)
     {
-        u8 remain = newValue % 10;
+        i8 remain = newValue % 10;
         newValue /= 10;
         outputInt[size - index] = remain + 48;
         index++;

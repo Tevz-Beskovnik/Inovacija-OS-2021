@@ -15,3 +15,13 @@ int pow(int base, int exp)
 
     return result;
 }
+
+int abs(int in)
+{   
+    return (in + (in >> 31)) ^ (in >> 31);
+}
+
+i64 absL(i64 in)
+{
+    return (in + (in >> 63)) ^ (in >> 63);
+}
