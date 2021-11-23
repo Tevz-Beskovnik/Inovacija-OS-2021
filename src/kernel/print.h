@@ -10,10 +10,6 @@
 
 #define WIDHT 80
 
-static u32 cursorPos;
-
-static u16 cursorX, cursorY;
-
 void clearScreen(u8);
 
 void setCursorPos(u8 x, u8 y);
@@ -29,5 +25,7 @@ u32 getCursorPos(void);
 const char* hexToChar(u8);
 
 const char* intToChar(i64);
+
+const char* doubleToChar(double);
 
 #endif

@@ -53,7 +53,7 @@ void keyboardHandler(u8 scanCode, u8 chr){
             break;
 
         case BACKSPACE_KEY_PRESS:
-            if(getCursorPos() != 0)
+            if(getCursorPos() != protectedCursorPos)
             {
                 setCursorPosSingle(getCursorPos() - 1);
                 printChar(' ', BACKGROUND_BLACK | FOREGROUND_WHITE);
@@ -67,4 +67,16 @@ void keyboardHandler(u8 scanCode, u8 chr){
                 printChar(convertedChar < 133 && convertedChar > 90 ? convertedChar - (u8)(capsLock | shift)*32 : convertedChar, BACKGROUND_BLACK | FOREGROUND_WHITE);
             break;
     }
+}
+
+void setProtectedCurosrPos(u8 x, u8 y)
+{
+    int pos = y * WIDHT + x;
+    protectedCursorPos = pos;
+    setCursorPosSingle(pos);
+}
+
+u16 getProtectedCurosrPos(void)
+{
+    return protectedCursorPos;
 }

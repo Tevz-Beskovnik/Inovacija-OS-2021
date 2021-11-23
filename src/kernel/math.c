@@ -1,19 +1,20 @@
 #include "math.h"
 
-int pow(int base, int exp)
+f32 pow(int x, int y)
 {
-    int result = 1;
-    for (;;)
+    float p=1.00;
+    float xx = (float)x;
+    int i;
+    if (y<0){
+        y=-1*y;
+        xx=1/xx;
+    }
+    for (i=1;i<=y;i++)
     {
-        if (exp & 1)
-            result *= base;
-        exp >>= 1;
-        if (!exp)
-            break;
-        base *= base;
+        p=p*xx;
     }
 
-    return result;
+    return p;
 }
 
 int abs(int in)
@@ -24,4 +25,9 @@ int abs(int in)
 i64 absL(i64 in)
 {
     return (in + (in >> 63)) ^ (in >> 63);
+}
+
+f64 absD(f64 in)
+{
+    return in < 0 ? in * -1 : in;
 }

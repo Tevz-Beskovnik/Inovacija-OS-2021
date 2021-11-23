@@ -8,9 +8,13 @@ extern const char Test[];
 void _main(){
     initIDT();
     setKeyboardHandler(keyboardHandler);
-
-    print(intToChar(-123456789), BACKGROUND_BLACK | FOREGROUND_WHITE);
-    /*const char* logo[5] = {
+    //print(intToChar(-123456789), BACKGROUND_BLACK | FOREGROUND_WHITE);
+    //print("\n", BACKGROUND_BLACK | FOREGROUND_WHITE);
+    double a = 15.5;
+    doubleToChar(a);
+    doubleToChar(a);
+    //print(doubleToChar(a), BACKGROUND_BLACK | FOREGROUND_WHITE);
+    const char* logo[5] = {
         " ______     ______   ______ \n\r",
         "/\\  ___\\   /\\  ___\\ /\\  ___\\ \n\r",
         "\\ \\___  \\  \\ \\  __\\ \\ \\___  \\ \n\r",
@@ -22,6 +26,7 @@ void _main(){
         print(logo[i], FOREGROUND_YELLOW | BACKGROUND_BLACK);
     }
 
-    print("\n\rSFS OS kernel\n\r", FOREGROUND_WHITE | BACKGROUND_BLACK);*/
+    print("\n\rSFS OS kernel\n\r", FOREGROUND_WHITE | BACKGROUND_BLACK);
+    setProtectedCurosrPos(0, 7);
     return; 
 }

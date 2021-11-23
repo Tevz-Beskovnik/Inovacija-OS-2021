@@ -42,11 +42,14 @@ start_protected_mode:
 [extern _main]
 
 %include "idt.asm"
+%include "enableSSE.asm"
 
 start_64_bit:
     mov edi, 0xb8000
     mov rax, 0x0f000f000f000f00
     mov ecx, 500
     rep stosq
+
+    call Enable_SSE ; enable SSE for floating point numbers
     call _main ; external function in our kernel
     jmp $ ; if the kernel ever gives control back to bootloader

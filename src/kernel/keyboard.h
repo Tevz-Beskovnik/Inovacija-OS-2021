@@ -26,6 +26,12 @@
 
 #define BACKSPACE_KEY_PRESS 0x0E
 
+static u16 protectedCursorPos = 0;
+
 void keyboardHandler(u8, u8);
+
+void setProtectedCurosrPos(u8, u8);
+
+u16 getProtectedCurosrPos(void);
 
 #endif

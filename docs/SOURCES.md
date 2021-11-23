@@ -20,3 +20,6 @@
  - **Entering long mode**: https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_the_64-bit_Submode *27. 10. 2021*
  - **AMD64 architecture programers manual volume 2**: https://www.amd.com/system/files/TechDocs/24593.pdf *28. 10. 2021*
  - **OSDEV**: https://github.com/lja83/OSDEV *17. 10. 2021*
+ - **Floating point standard:**: https://en.wikipedia.org/wiki/IEEE_754 *22. 11. 2021*
+ - **Double percision floating point standard**: https://en.wikipedia.org/wiki/Double-precision_floating-point_format *22. 11. 2021*
+ - **Enabling SSE**: https://wiki.osdev.org/SSE *22. 11. 2021*

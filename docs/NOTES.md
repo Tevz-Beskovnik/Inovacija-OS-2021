@@ -73,3 +73,18 @@
 
  - **0x7C00** address sapce where the bootloader is contained,
  - **0x7E00** address where the sections of the bootloader to switch to 32 bit protected mode and 64 bit long mode + kernel and everything else
+
+## floating point and double standard floating point number standards:
+
+ - **float**:
+ - *31st bit* signed bit (for positive or negative numbers)
+ - *30th - 23rd bit (8 bits)* exponent
+ - *lowe 23 bits* fraction
+ 
+ - **double**:
+ - *63rd bit* signed bit (to represent a positiv (low) or negative (high) value)
+ - *62nd - 52nd bit* exponent
+ - *lower 52 bits* fraction
+
+
+## floating point numbers conversions (casts) do not work by default so you have to enable the SSE (Streaming SIMD Extensions)

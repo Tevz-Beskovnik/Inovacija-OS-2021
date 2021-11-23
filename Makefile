@@ -101,6 +101,6 @@ kernel: $(KERNEL_OBJ)
 # copy all of the contetnts to the iso file
 iso: clear dirs objects bootsector kernel
 #    dd if=/dev/zero of=$(ISO) bs=512 count=2880
-	dd if=/dev/zero of=$(ISO) bs=512 count=13
+	dd if=/dev/zero of=$(ISO) bs=512 count=2880
 	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 seek=0 count=1
-	dd if=./bin/$(KERNEL) of=$(ISO) bs=512 seek=1 count=12
+	dd if=./bin/$(KERNEL) of=$(ISO) bs=512 seek=1 count=16

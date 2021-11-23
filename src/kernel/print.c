@@ -11,6 +11,10 @@ eg. it must be dimensions of 0x00000000
 00 -> hex code of char
 */
 
+static u32 cursorPos;
+
+static u16 cursorX, cursorY;
+
 void clearScreen(u8 color)
 {
     u64 value = (color << 8) + (color << 24) + ((u64)color << 40) + ((u64)color << 56);
@@ -90,6 +94,10 @@ char outputInt[20];
 // function that returns the intager value in char pointer form for printing
 const char* intToChar (i64 number)
 {
+    for(int i = 0; i < 20; i++)
+    {
+        outputInt[i] = ' ';
+    }
     i64 numb = number;
     if(number < 0)
         numb = absL(number);
@@ -119,4 +127,42 @@ const char* intToChar (i64 number)
     }
 
     return outputInt;
+}
+
+char outputDouble[30];
+const char* doubleToChar(f64 in)
+{
+    f64 full = 1;
+    for(int i = 1; i < 52; i++){
+        full += ((*(u64*)&in >> (52 - i))&0x1)*pow(2, -i);
+    }
+    int j = 0;
+    for(int i = 0; i < 11; i++){
+        j += (int)((*(u64*)&in >> (62 - i))&0x1) * (int)pow(2, 10-i);
+    }
+    full *= pow(-1, (*(u64*)&in >> 63));
+    full *= pow(2, j - 1023);
+    int whole = (i64)full;
+    u64 decimal = (u64)((absD(full) - absD((int)full)) * pow(10, 15));
+    while(decimal%10 == 0)
+    {
+        decimal /= 10;
+    }
+    u8 index = 0;
+    const char* wholeNum = intToChar(whole);
+    while(*wholeNum != ' ')
+    {
+        outputDouble[index] = *wholeNum;
+        wholeNum++;
+        index++;
+    }
+    outputDouble[index++] = '.';
+    const char* decimalNum = intToChar(decimal);
+    while(*decimalNum != ' ')
+    {
+        outputDouble[index] = *decimalNum;
+        decimalNum++;
+        index++;
+    }
+    return outputDouble;
 }

@@ -3,10 +3,12 @@
 
 #include "util.h"
 
-int pow(int, int);
+f32 pow(int, int);
 
 int abs(int);
 
 i64 absL(i64);
+
+f64 absD(f64);
 
 #endif
