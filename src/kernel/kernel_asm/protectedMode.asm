@@ -3,6 +3,12 @@ segment .text
 
 global _start
 _start: 
+    jmp enter_protected_mode
+
+%include "detectMemory.asm"
+
+enter_protected_mode:
+    call DetectMemory ; detect memory
     call enable_A20 ; enable the A20 line (32 bit address line)
     cli 
     lgdt [gdt_descriptor] ; enable gdt

@@ -41,8 +41,6 @@ BOOTLOADER_EXT_OBJ = src/kernel/kernel_asm/protectedMode.o
 
 # external assembly objects
 
-KERNEL_ASM_OBJ = src/kernel/kernel_asm/binaries.o
-
 # object files for kernal (commented for right now)
 
 KERNEL_CPP_FILES = $(wildcard src/kernel/*.c)
@@ -55,7 +53,7 @@ KERNEL_CPP_FILES = $(wildcard src/kernel/*.c)
 
 #KERNEL_DEBUG_DEBUG = src/kernel/kernel.o
 
-KERNEL_OBJ = $(BOOTLOADER_EXT_OBJ) $(KERNEL_CPP_FILES:.c=.o) $(KERNEL_ASM_OBJ)
+KERNEL_OBJ = $(BOOTLOADER_EXT_OBJ) $(KERNEL_CPP_FILES:.c=.o)
 
 #create the binaries and the system image
 BOOTSECTOR=bootsector.bin
@@ -100,7 +98,6 @@ kernel: $(KERNEL_OBJ)
 
 # copy all of the contetnts to the iso file
 iso: clear dirs objects bootsector kernel
-#    dd if=/dev/zero of=$(ISO) bs=512 count=2880
-	dd if=/dev/zero of=$(ISO) bs=512 count=2880
-	dd if=./bin/$(BOOTSECTOR) of=$(ISO) bs=512 seek=0 count=1
-	dd if=./bin/$(KERNEL) of=$(ISO) bs=512 seek=1 count=16
+	dd if=/dev/zero of=$(ISO) bs=512 count=33
+	dd if=./bin/$(BOOTSECTOR) of=$(ISO) conv=notrunc bs=512 seek=0 count=1
+	dd if=./bin/$(KERNEL) of=$(ISO) conv=notrunc bs=512 seek=1

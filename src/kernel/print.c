@@ -129,7 +129,7 @@ const char* intToChar (i64 number)
     return outputInt;
 }
 
-char outputDouble[30];
+/*char outputDouble[20];
 const char* doubleToChar(f64 in)
 {
     f64 full = 1;
@@ -165,4 +165,4 @@ const char* doubleToChar(f64 in)
         index++;
     }
     return outputDouble;
-}
+}*/

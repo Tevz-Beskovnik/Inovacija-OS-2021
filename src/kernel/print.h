@@ -26,6 +26,6 @@ const char* hexToChar(u8);
 
 const char* intToChar(i64);
 
-const char* doubleToChar(double);
+//const char* doubleToChar(double);
 
 #endif

@@ -17,3 +17,5 @@ exit:
 boot_welcome:
     db 'SFS booting', 0x0a, 0x0d, 0
 
+boot_kernel_load:
+    db 'Kernel has been loaded', 0x0a, 0x0d, 0
