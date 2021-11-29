@@ -26,7 +26,7 @@ read_disk:
     cmp al, SECTORS_TO_READ
     jne disk_sector_error
 
-    ret
+    jmp 0x7e00
     
 disk_sector_error_str:
     db 'DISK SECTOR ERROR', 0x0a, 0x0d, 0

@@ -88,3 +88,8 @@
 
 
 ## floating point numbers conversions (casts) do not work by default so you have to enable the SSE (Streaming SIMD Extensions)
+
+## memory addressing for dynamic memory allocation:
+
+ - **paging** currently paging is set up to be 4 layered
+ - **memory address accessing** before paging setup memory can only be addressed up to 0x00200000 (0x200000)

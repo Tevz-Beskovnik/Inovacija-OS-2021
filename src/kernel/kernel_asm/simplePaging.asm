@@ -8,7 +8,7 @@
 ; PML4T[0] -> PDPT.
 ; PDPT[0] -> PDT.
 ; PDT[0] -> PT.
-; PT -> 0x00000000 - 0x00200000.
+; PT -> 0x00000000 - 0x00200000. <- current adressable memory :thumbusp:
 
 ; disabling paging
 setup_paging:

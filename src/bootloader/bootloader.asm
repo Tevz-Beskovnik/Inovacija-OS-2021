@@ -17,8 +17,7 @@ _start:
 
     call load_extended ; read the kernal from disk
 
-    ;call enter_protected_mode ; enter protected mode
-    jmp 0x7e00
+    ;call enter_protected_mode ; enter protected mode (this is now in read_disk.asm becouse ret want working sometime?)
 
 %include "print.asm"
 %include "read_disk.asm"
@@ -33,7 +32,7 @@ KERNEL_OFFSET equ 0x8000 ; offset at witch the kernel is located at
 
 DISK_NUM equ 0 ; number of the disk
 
-SECTORS_TO_READ equ 32
+SECTORS_TO_READ equ 64
 
 times 510 - ($-$$) db 0 ; fill the rest of the bootsector till its 512 bytes
 dw 0xaa55 ; magic boot number ;)

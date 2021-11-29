@@ -14,7 +14,7 @@
  - **Master boot record**: https://en.wikipedia.org/wiki/Master_boot_record *6. 10. 2021*
  - **Makefile tutorial**: https://makefiletutorial.com/ *6. 10. 2021*
  - **Bootloader but in nasm**: https://github.com/FRosner/FrOS/blob/minimal-c-kernel/mbr.asm *7. 10. 2021*
- - **Writting a simple operating system - from scratch**: https://github.com/shekohex/my-free-eBooks/blob/master/System-Design/OS-Dev.pdf *11. 10. 2021*
+ - **os-dev.pdf**: https://github.com/shekohex/my-free-eBooks/blob/master/System-Design/OS-Dev.pdf *11. 10. 2021*
  - **Interrupt descriptor table**: https://wiki.osdev.org/Interrupt_Descriptor_Table *18. 10. 2021*
  - **Entering 32 bit protected mode**: https://www.youtube.com/watch?v=pXzortxPZR8&t=5s *26. 10. 2021*
  - **Entering long mode**: https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_the_64-bit_Submode *27. 10. 2021*
