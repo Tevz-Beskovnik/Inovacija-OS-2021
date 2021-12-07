@@ -36,7 +36,7 @@ void BasicRender::putChar(const char chr, u32 xOff, u32 yOff)
     }
 }
 
-void BasicRender::Print(u32 colour, const char* str)
+void BasicRender::print(u32 colour, const char* str)
 {
     const char* chr = str;
     while(*chr != 0){
@@ -51,7 +51,7 @@ void BasicRender::Print(u32 colour, const char* str)
     }
 }
 
-void BasicRender::Print(const char* str)
+void BasicRender::print(const char* str)
 {
     const char* chr = str;
     while(*chr != 0){

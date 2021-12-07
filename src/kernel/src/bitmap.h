@@ -10,5 +10,5 @@ class Bitmap
 
         bool operator[](u64 index);
 
-        void set(u64 index, bool value);
+        bool set(u64 index, bool value);
 };

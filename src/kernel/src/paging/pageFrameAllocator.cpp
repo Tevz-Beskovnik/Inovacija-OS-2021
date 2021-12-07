@@ -7,6 +7,8 @@ u64 usedMemory;
 u64 latestPage;
 bool intialized = false;
 
+PageFrameAllocator GLOBAL_ALLOCATOR;
+
 // the division and multiplication with 4096 is like this becouse the size
 // of the page in the pysical memory is 4KB = 4096 
 
@@ -86,9 +88,11 @@ void PageFrameAllocator::FreePage(void* address)
     u64 index = (u64)address/4096;
     latestPage = index;
     if(pageBitmap[index] == false) return;
-    pageBitmap.set(index, false);
-    freeMemory += 4096;
-    usedMemory -= 4096;
+    if(pageBitmap.set(index, false))
+    {
+        freeMemory += 4096;
+        usedMemory -= 4096;
+    }
 }
 
 void PageFrameAllocator::LockPage(void* address)
@@ -96,27 +100,33 @@ void PageFrameAllocator::LockPage(void* address)
     u64 index = (u64)address/4096;
     latestPage = latestPage < index + 1 ? latestPage : index + 1;
     if(pageBitmap[index] == true) return;
-    pageBitmap.set(index, true);
-    freeMemory -= 4096;
-    usedMemory += 4096;
+    if(pageBitmap.set(index, true))
+    {
+        freeMemory -= 4096;
+        usedMemory += 4096;
+    }
 }
 
 void PageFrameAllocator::UnreservePage(void* address)
 {
     u64 index = (u64)address/4096;
     if(pageBitmap[index] == false) return;
-    pageBitmap.set(index, false);
-    freeMemory += 4096;
-    reservedMemory -= 4096;
+    if(pageBitmap.set(index, false))
+    {
+        freeMemory += 4096;
+        reservedMemory -= 4096;
+    }
 }
 
 void PageFrameAllocator::ReservePage(void* address)
 {
     u64 index = (u64)address/4096;
     if(pageBitmap[index] == true) return;
-    pageBitmap.set(index, true);
-    freeMemory -= 4096;
-    reservedMemory += 4096;
+    if(pageBitmap.set(index, true))
+    {
+        freeMemory -= 4096;
+        reservedMemory += 4096;
+    }
 }
 
 void PageFrameAllocator::FreePages(u64 pageCount, void* address)

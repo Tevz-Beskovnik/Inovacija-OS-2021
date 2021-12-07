@@ -15,5 +15,10 @@ struct PageDirectoryEntry
     bool largerPages : true;
     bool ignore1: true;
     u8 available : 3;
-    
+    u64 address : 52;
 };
+
+struct PageTable
+{
+    PageDirectoryEntry entries[512];
+}__attribute__((aligned(0x1000)));

@@ -18,6 +18,9 @@ char* TypeConv::intToChar (i64 number)
     {
         outputInt[i] = 0x00;
     }
+
+    outputInt[0] = '0';
+    
     i64 numb = number;
     if(number < 0)
         numb = Math::absL(number);

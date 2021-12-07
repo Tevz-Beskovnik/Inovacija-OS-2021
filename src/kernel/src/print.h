@@ -23,8 +23,8 @@ class BasicRender
         void putChar(u32 colour, const char chr, u32 xOff, u32 yOff);
         void putChar(const char chr, u32 xOff, u32 yOff);
 
-        void Print(u32 colour, const char* str);
-        void Print(const char* str);
+        void print(u32 colour, const char* str);
+        void print(const char* str);
 	
 	private:
 		Framebuffer* framebuffer;
