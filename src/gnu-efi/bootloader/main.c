@@ -124,7 +124,17 @@ typedef struct {
 	EFI_MEMORY_DESCRIPTOR* mMap;
 	UINTN mMapSize;
 	UINTN mMapDescSize;
+	void* rsdp;
 } BootInfo;
+
+UINTN strcmp(CHAR8* a, CHAR8* b, UINTN length)
+{
+	for(UINTN i = 0; i < length; i++)
+	{
+		if(*(a+i) != *(b+i)) return 0;
+	}
+	return 1;
+}
 
 EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	InitializeLib(ImageHandle, SystemTable);
@@ -233,6 +243,19 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 		SystemTable->BootServices->GetMemoryMap(&MapSize, Map, &MapKey, &DescriptorSize, &DescriptorVersion);
 	}
 
+	EFI_CONFIGURATION_TABLE* configTable = SystemTable->ConfigurationTable;
+	void* rsdp = NULL;
+	EFI_GUID acpi2TableGuid = ACPI_20_TABLE_GUID;
+
+	for(UINTN index = 0; index < SystemTable->NumberOfTableEntries; index++)
+	{
+		if(CompareGuid(&configTable[index].VendorGuid, &acpi2TableGuid) && strcmp((CHAR8*)"RSD PTR ", (CHAR8*)configTable->VendorTable, 8))
+		{
+			rsdp = (void*)configTable->VendorTable; 
+		}
+		configTable++;
+	}
+
 	void (*KernelStart)(BootInfo*) = ((__attribute__((sysv_abi)) void (*)(BootInfo*) ) header.e_entry);
 
 	BootInfo bootInfo;
@@ -241,6 +264,7 @@ EFI_STATUS efi_main (EFI_HANDLE ImageHandle, EFI_SYSTEM_TABLE *SystemTable) {
 	bootInfo.mMap = Map;
 	bootInfo.mMapSize = MapSize;
 	bootInfo.mMapDescSize = DescriptorSize;
+	bootInfo.rsdp = rsdp;
 
 	SystemTable->BootServices->ExitBootServices(ImageHandle, MapKey);
 

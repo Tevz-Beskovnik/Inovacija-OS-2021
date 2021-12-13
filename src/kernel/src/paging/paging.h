@@ -1,24 +1,28 @@
 #pragma once
+#include <stdint.h>
 
-#include "../typedef.h" 
-
-struct PageDirectoryEntry 
-{
-    // this is the struct from the notes.md 9 bits attributes 3 bits for dev use and 52 bit address
-    bool present : true;
-    bool readWrite : true;
-    bool UserSupre : true;
-    bool writeTrough : true;
-    bool cacheDisabled : true;
-    bool accessed : true;
-    bool ignore0 : true;
-    bool largerPages : true;
-    bool ignore1: true;
-    u8 available : 3;
-    u64 address : 52;
+enum PT_Flag {
+    Present = 0,
+    ReadWrite = 1,
+    UserSuper = 2,
+    WriteThrough = 3,
+    CacheDisabled = 4,
+    Accessed = 5,
+    LargerPages = 7,
+    Custom0 = 9,
+    Custom1 = 10,
+    Custom2 = 11,
+    NX = 63 // only if supported
 };
 
-struct PageTable
-{
-    PageDirectoryEntry entries[512];
+struct PageDirectoryEntry {
+    uint64_t Value;
+    void SetFlag(PT_Flag flag, bool enabled);
+    bool GetFlag(PT_Flag flag);
+    void SetAddress(uint64_t address);
+    uint64_t GetAddress();
+};
+
+struct PageTable { 
+    PageDirectoryEntry entries [512];
 }__attribute__((aligned(0x1000)));

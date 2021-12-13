@@ -23,3 +23,4 @@
  - **Floating point standard:**: https://en.wikipedia.org/wiki/IEEE_754 *22. 11. 2021*
  - **Double percision floating point standard**: https://en.wikipedia.org/wiki/Double-precision_floating-point_format *22. 11. 2021*
  - **Enabling SSE**: https://wiki.osdev.org/SSE *22. 11. 2021*
+ - **Exceptions**: https://wiki.osdev.org/Exceptions *10. 12. 2021*

@@ -1,20 +1,9 @@
 #pragma once
-
 #include "paging.h"
-#include "../typedef.h"
-#include "pageMapIndexer.h"
-#include "pageFrameAllocator.h"
-#include "../memory.h"
 
-class PageTableManager
-{
+class PageTableManager {
     public:
-        PageTableManager(PageTable* PML4Address);
-
-        void MapMemory(void* virtualMemory, void* physicalMemory);
-
-    private: 
-        PageTable* PML4;
+    PageTableManager(PageTable* PML4Address);
+    PageTable* PML4;
+    void MapMemory(void* virtualMemory, void* physicalMemory);
 };
-
-extern PageFrameAllocator GLOBAL_ALLOCATOR;

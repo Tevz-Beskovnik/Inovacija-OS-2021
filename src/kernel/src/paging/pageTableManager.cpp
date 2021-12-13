@@ -1,72 +1,66 @@
 #include "pageTableManager.h"
+#include "pageMapIndexer.h"
+#include <stdint.h>
+#include "pageFrameAllocator.h"
+#include "../memory.h"
 
-PageTableManager::PageTableManager(PageTable* PML4Address)
-    :PML4(PML4Address)
-{
-    ;
+PageTableManager::PageTableManager(PageTable* PML4Address){
+    this->PML4 = PML4Address;
 }
 
-void PageTableManager::MapMemory(void* virtualMemory, void* physicalMemory)
-{
-    PageMapIndexer indexer((u64)virtualMemory);
+void PageTableManager::MapMemory(void* virtualMemory, void* physicalMemory){
+    PageMapIndexer indexer = PageMapIndexer((uint64_t)virtualMemory);
     PageDirectoryEntry PDE;
 
-    // če 4 slojni paging tabela ne obstaja se ustvari
-    // najprej se ustvari page directory pointer
     PDE = PML4->entries[indexer.PDP_i];
     PageTable* PDP;
-    if(!PDE.present) // če ni prisotno v spominu treba spravit v spomin 
-    {
+    if (!PDE.GetFlag(PT_Flag::Present)){
         PDP = (PageTable*)GLOBAL_ALLOCATOR.RequestPage();
         memset(PDP, 0, 0x1000);
-        PDE.address = (u64)PDP >> 12;
-        PDE.present = true;
-        PDE.readWrite = true;
+        PDE.SetAddress((uint64_t)PDP >> 12);
+        PDE.SetFlag(PT_Flag::Present, true);
+        PDE.SetFlag(PT_Flag::ReadWrite, true);
         PML4->entries[indexer.PDP_i] = PDE;
     }
     else
     {
-        PDP = (PageTable*)((u64)PDE.address << 12);
+        PDP = (PageTable*)((uint64_t)PDE.GetAddress() << 12);
     }
-
-    // ustvari se Page Directory
+    
+    
     PDE = PDP->entries[indexer.PD_i];
     PageTable* PD;
-    if(!PDE.present) // če ni prisotno v spominu treba spravit v spomin 
-    {
+    if (!PDE.GetFlag(PT_Flag::Present)){
         PD = (PageTable*)GLOBAL_ALLOCATOR.RequestPage();
         memset(PD, 0, 0x1000);
-        PDE.address = (u64)PD >> 12;
-        PDE.present = true;
-        PDE.readWrite = true;
+        PDE.SetAddress((uint64_t)PD >> 12);
+        PDE.SetFlag(PT_Flag::Present, true);
+        PDE.SetFlag(PT_Flag::ReadWrite, true);
         PDP->entries[indexer.PD_i] = PDE;
     }
     else
     {
-        PD = (PageTable*)((u64)PDE.address << 12);
+        PD = (PageTable*)((uint64_t)PDE.GetAddress() << 12);
     }
 
-    // ustvari se page table
     PDE = PD->entries[indexer.PT_i];
     PageTable* PT;
-    if(!PDE.present) // če ni prisotno v spominu treba spravit v spomin 
-    {
+    if (!PDE.GetFlag(PT_Flag::Present)){
         PT = (PageTable*)GLOBAL_ALLOCATOR.RequestPage();
         memset(PT, 0, 0x1000);
-        PDE.address = (u64)PT >> 12;
-        PDE.present = true;
-        PDE.readWrite = true;
+        PDE.SetAddress((uint64_t)PT >> 12);
+        PDE.SetFlag(PT_Flag::Present, true);
+        PDE.SetFlag(PT_Flag::ReadWrite, true);
         PD->entries[indexer.PT_i] = PDE;
     }
     else
     {
-        PT = (PageTable*)((u64)PDE.address << 12);
+        PT = (PageTable*)((uint64_t)PDE.GetAddress() << 12);
     }
 
-    // ustvari se page
     PDE = PT->entries[indexer.P_i];
-    PDE.address = (u64)physicalMemory >> 12;
-    PDE.present = true;
-    PDE.readWrite = true;
+    PDE.SetAddress((uint64_t)physicalMemory >> 12);
+    PDE.SetFlag(PT_Flag::Present, true);
+    PDE.SetFlag(PT_Flag::ReadWrite, true);
     PT->entries[indexer.P_i] = PDE;
 }

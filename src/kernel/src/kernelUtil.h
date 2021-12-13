@@ -1,23 +1,41 @@
-#include "paging/pageFrameAllocator.h"
-#include "paging/pageTableManager.h"
-#include "paging/pageMapIndexer.h"
-#include "type_conversion.h"
-#include "paging/paging.h"
-#include "typedef.h"
-#include "memory.h"
-#include "math.h"
+#pragma once
+
+//#define MOUSE_ENABLE // <-- uncoment to enable the mouse
+
+#include <stdint.h>
 #include "print.h"
+#include "efiMemory.h"
+#include "memory.h"
 #include "bitmap.h"
-#include "font.h"
-#include "boot.h"
-#include "rgb.h"
+#include "paging/pageFrameAllocator.h"
+#include "paging/pageMapIndexer.h"
+#include "paging/paging.h"
+#include "paging/pageTableManager.h"
+#include "gdt/gdt.h"
+#include "interrupts/idt.h"
+#include "interrupts/interrupts.h"
+#include "io.h"
+#include "pci/acpi.h"
+#include "cstr.h"
 
-extern u64 _KernStart; // start of kernel
-extern u64 _KernEnd; // end of kernel
+#ifdef MOUSE_ENABLE
+	#include "mouse/mouse.h"
+#endif
 
-struct KernelInfo
-{
+struct BootInfo {
+	Framebuffer* framebuffer;
+	PSF1_FONT* psf1_Font;
+	EFI_MEMORY_DESCRIPTOR* mMap;
+	uint64_t mMapSize;
+	uint64_t mMapDescSize;
+	ACPI::RSDP2* rsdp;
+} ;
+
+extern uint64_t _KernStart;
+extern uint64_t _KernEnd;
+
+struct KernelInfo {
     PageTableManager* pageTableManager;
-};  
+};
 
-KernelInfo InitializeInfo(BootInfo* bootInfo);
+KernelInfo InitializeKernel(BootInfo* BootInfo);

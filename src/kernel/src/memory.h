@@ -1,8 +1,7 @@
 #pragma once
 
-#include "typedef.h"
-#include "boot.h"
+#include <stdint.h>
+#include "efiMemory.h"
 
-u64 getMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, u64 memMapEntries, u64 memMapDescSize);
-
-void memset(void* start, u8 value, u64 amount);
+uint64_t GetMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, uint64_t mMapEntries, uint64_t mMapDescSize);
+void memset(void* start, uint8_t value, uint64_t num);

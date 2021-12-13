@@ -1,24 +1,22 @@
+
 #include "memory.h"
 
-u64 getMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, u64 memMapEntries, u64 memMapDescSize)
-{
-    static u64 memorySizeBtyes = 0;
-    
-    if(memorySizeBtyes > 0) return memorySizeBtyes;
+uint64_t GetMemorySize(EFI_MEMORY_DESCRIPTOR* mMap, uint64_t mMapEntries, uint64_t mMapDescSize){
 
-    for(int i = 0; i < memMapEntries; i++)
-    {
-        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((u64)mMap + (i * memMapDescSize));
-        memorySizeBtyes+= desc->NumberOfPages*4096;
+    static uint64_t memorySizeBytes = 0;
+    if (memorySizeBytes > 0) return memorySizeBytes;
+
+    for (int i = 0; i < mMapEntries; i++){
+        EFI_MEMORY_DESCRIPTOR* desc = (EFI_MEMORY_DESCRIPTOR*)((uint64_t)mMap + (i * mMapDescSize));
+        memorySizeBytes += desc->numPages * 4096;
     }
 
-    return memorySizeBtyes;
+    return memorySizeBytes;
+
 }
 
-void memset(void* start, u8 value, u64 amount)
-{
-    for(u64 i = 0; i < amount; i++)
-    {
-        *(u8*)((u64)start + i) = value;
+void memset(void* start, uint8_t value, uint64_t num){
+    for (uint64_t i = 0; i < num; i++){
+        *(uint8_t*)((uint64_t)start + i) = value;
     }
 }

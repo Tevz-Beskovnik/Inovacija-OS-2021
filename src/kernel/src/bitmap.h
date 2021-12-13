@@ -1,14 +1,11 @@
 #pragma once
+#include <stddef.h>
+#include <stdint.h>
 
-#include "typedef.h"
-
-class Bitmap
-{
+class Bitmap{
     public:
-        size_t size;
-        u8* Buffer;
-
-        bool operator[](u64 index);
-
-        bool set(u64 index, bool value);
+    size_t Size;
+    uint8_t* Buffer;
+    bool operator[](uint64_t index);
+    bool Set(uint64_t index, bool value);
 };

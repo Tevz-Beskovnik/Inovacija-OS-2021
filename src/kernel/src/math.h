@@ -1,20 +1,20 @@
 #pragma once
 
-#include "typedef.h"
+#include <stdint.h>
 
-typedef struct {
-    u32 X;
-    u32 Y;
-} Point;
+struct Point{
+    long X;
+    long Y;
+};
 
 class Math
 {
     public:
-        static f32 pow(int x, int y);
+        static float pow(int x, int y);
     
         static int abs(int in);
     
-        static i64 absL(i64 in);
+        static int64_t absL(int64_t in);
     
-        static f64 absD(f64 in);
+        static double absD(double in);
 };

@@ -1,32 +1,32 @@
 #pragma once
-
-#include "typedef.h"
-#include "font.h"
 #include "math.h"
-#include "rgb.h"
+#include "framebuffer.h"
+#include "simpleFonts.h" 
+#include <stdint.h>
 
-struct Framebuffer {
-	void* BaseAddress;
-	size_t BufferSize;
-	u32 Width;
-	u32 Height;
-	u32 PixelsPerScanLine;
-};
-
-class BasicRender
-{
+class BasicRenderer{
     public:
-        Point CursorPosition;
+    	BasicRenderer(Framebuffer* targetFramebuffer, PSF1_FONT* psf1_Font);
+    	Point CursorPosition;
+    	Framebuffer* TargetFramebuffer;
 
-		BasicRender(Framebuffer* framebuffer, PSF1_FONT* psf1_font);
+    	void Print(const char* str);
+    	void Print(uint32_t color, const char* str);
 
-        void putChar(u32 colour, const char chr, u32 xOff, u32 yOff);
-        void putChar(const char chr, u32 xOff, u32 yOff);
+    	void PutChar(char chr, unsigned int xOff, unsigned int yOff);
+    	void PutChar(uint32_t color, char chr, unsigned int xOff, unsigned int yOff);
 
-        void print(u32 colour, const char* str);
-        void print(const char* str);
-	
+    	void PutChar(char chr);
+    	void PutChar(uint32_t color, char chr);
+
+    	void ClearChar(uint32_t color);
+
+    	void Clear(uint32_t color);
+
+    	void Next();
+
 	private:
-		Framebuffer* framebuffer;
-		PSF1_FONT* psf1_font;
+    	PSF1_FONT* PSF1_Font;
 };
+
+extern BasicRenderer* GLOBAL_RENDERER;

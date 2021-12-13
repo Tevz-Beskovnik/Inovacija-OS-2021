@@ -1,47 +1,104 @@
 #include "kernelUtil.h"
 
-KernelInfo kernelInfo;
+KernelInfo kernelInfo; 
 PageTableManager pageTableManager = NULL;
-void prepareMemory(BootInfo* bootInfo)
-{
-    u64 memMapSize = bootInfo->mMapSize / bootInfo->mMapDescSize;
+void PrepareMemory(BootInfo* bootInfo){
+    uint64_t mMapEntries = bootInfo->mMapSize / bootInfo->mMapDescSize;
 
     GLOBAL_ALLOCATOR = PageFrameAllocator();
-    GLOBAL_ALLOCATOR.readEFIMemoryMap(bootInfo->mMap, bootInfo->mMapSize, bootInfo->mMapDescSize);
+    GLOBAL_ALLOCATOR.ReadEFIMemoryMap(bootInfo->mMap, bootInfo->mMapSize, bootInfo->mMapDescSize);
 
-    u64 kernelSize = (u64)&_KernEnd - (u64)&_KernStart; // get the actual size of the kernel
-    u64 kernelPages = (u64)kernelSize / 4096 + 1; // get the amount of 
+    uint64_t kernelSize = (uint64_t)&_KernEnd - (uint64_t)&_KernStart;
+    uint64_t kernelPages = (uint64_t)kernelSize / 4096 + 1;
 
-    GLOBAL_ALLOCATOR.LockPages(kernelPages, &_KernStart); // lock the memory of the kernel pages
+    GLOBAL_ALLOCATOR.LockPages(&_KernStart, kernelPages);
 
     PageTable* PML4 = (PageTable*)GLOBAL_ALLOCATOR.RequestPage();
     memset(PML4, 0, 0x1000);
 
     pageTableManager = PageTableManager(PML4);
 
-    for(u64 i = 0; i < getMemorySize(bootInfo->mMap, memMapSize, bootInfo->mMapDescSize); i += 0x1000)
-    {
-        pageTableManager.MapMemory((void*)i, (void*)i);
+    for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntries, bootInfo->mMapDescSize); t+= 0x1000){
+        pageTableManager.MapMemory((void*)t, (void*)t);
     }
 
-    u64 fbBase = (u64)bootInfo->framebuffer->BaseAddress;
-    u64 fbSize = (u64)bootInfo->framebuffer->BufferSize + 0x1000;
-    GLOBAL_ALLOCATOR.LockPages(fbSize / 0x10000 + 1, (void*)fbBase);
-    for(u64 i = fbBase; i < fbBase + fbSize; i += 0x1000)
-    {
-        pageTableManager.MapMemory((void*)i, (void*)i);
+    uint64_t fbBase = (uint64_t)bootInfo->framebuffer->BaseAddress;
+    uint64_t fbSize = (uint64_t)bootInfo->framebuffer->BufferSize + 0x1000;
+    GLOBAL_ALLOCATOR.LockPages((void*)fbBase, fbSize/ 0x1000 + 1);
+    for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
+        pageTableManager.MapMemory((void*)t, (void*)t);
     }
 
-    asm("mov %0, %%cr3" : : "r" (PML4));
+    asm ("mov %0, %%cr3" : : "r" (PML4));
 
     kernelInfo.pageTableManager = &pageTableManager;
 }
 
-KernelInfo InitializeInfo(BootInfo* bootInfo)
+IDTR idtr;
+void setIDTGate(void* handler, uint8_t entryOffset, uint8_t type_attr, uint8_t selector)
 {
-    prepareMemory(bootInfo);
+    IDTDescEntry* interruptEntry = (IDTDescEntry*)(idtr.Offset + entryOffset * sizeof(IDTDescEntry));
+    interruptEntry->SetOffset((uint64_t)handler);
+    interruptEntry->type_attr = type_attr;
+    interruptEntry->selector = selector;
+}
+
+void PrepareInterrupts(){
+    idtr.Limit = 0x0FFF;
+    idtr.Offset = (uint64_t)GLOBAL_ALLOCATOR.RequestPage();
+
+    setIDTGate((void*)PageFault_Handler, 0xE, IDT_TA_InterruptGate, 0x08); 
+    setIDTGate((void*)DoubleFault_Handler, 0x8, IDT_TA_InterruptGate, 0x08);
+    setIDTGate((void*)GPFault_Handler, 0xD, IDT_TA_InterruptGate, 0x08);
+    setIDTGate((void*)KeyboardInt_Handler, 0x21, IDT_TA_InterruptGate, 0x08);
+    
+    #ifdef MOUSE_ENABLE
+        setIDTGate((void*)MouseInt_Handler, 0x2C, IDT_TA_InterruptGate, 0x08);
+    #endif
+
+    asm ("lidt %0" : : "m" (idtr));
+
+    RemapPIC();
+
+    #ifdef MOUSE_ENABLE
+        PS2Mouse();
+    #endif
+
+    outb(PIC1_DATA, 0b11111001);
+    outb(PIC2_DATA, 0b11101111);
+
+    asm ("sti");
+}
+
+void prepareACPI(BootInfo* bootInfo)
+{
+    ACPI::SDTHeader* xsdt = (ACPI::SDTHeader*)(bootInfo->rsdp->XSDTAddress);
+
+    ACPI::MCFGHeader* mcfg = (ACPI::MCFGHeader*)ACPI::findTable(xsdt, (char*)"MCFG");
+    for(int i = 0; i < 4; i++)
+    {
+        GLOBAL_RENDERER->PutChar(mcfg->header.signature[i]);
+    }
+    GLOBAL_RENDERER->Next();
+}
+
+BasicRenderer r = BasicRenderer(NULL, NULL);
+KernelInfo InitializeKernel(BootInfo* bootInfo){
+    r = BasicRenderer(bootInfo->framebuffer, bootInfo->psf1_Font);
+    GLOBAL_RENDERER = &r;
+
+    GDTDescriptor gdtDescriptor;
+    gdtDescriptor.Size = sizeof(GDT) - 1;
+    gdtDescriptor.Offset = (uint64_t)&DefaultGDT;
+    LoadGDT(&gdtDescriptor);
+
+    PrepareMemory(bootInfo);
 
     memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
+
+    PrepareInterrupts();
+
+    prepareACPI(bootInfo);
 
     return kernelInfo;
 }

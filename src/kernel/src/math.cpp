@@ -1,6 +1,6 @@
 #include "math.h"
 
-f32 Math::pow(int x, int y)
+float Math::pow(int x, int y)
 {
     float p=1.00;
     float xx = (float)x;
@@ -22,12 +22,12 @@ int Math::abs(int in)
     return (in + (in >> 31)) ^ (in >> 31);
 }
 
-i64 Math::absL(i64 in)
+int64_t Math::absL(int64_t in)
 {
     return (in + (in >> 63)) ^ (in >> 63);
 }
 
-f64 Math::absD(f64 in)
+double Math::absD(double in)
 {
     return in < 0 ? in * -1 : in;
 }
