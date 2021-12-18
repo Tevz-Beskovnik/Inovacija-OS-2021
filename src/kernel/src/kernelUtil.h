@@ -16,6 +16,7 @@
 #include "interrupts/interrupts.h"
 #include "io.h"
 #include "pci/acpi.h"
+#include "pci/pci.h" 
 #include "cstr.h"
 
 #ifdef MOUSE_ENABLE

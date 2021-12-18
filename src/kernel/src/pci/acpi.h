@@ -32,17 +32,17 @@ namespace ACPI
     struct MCFGHeader
     {
         SDTHeader header;
-        uint64_t reserver;
+        uint64_t reserved;
     }__attribute__((packed));
 
     struct DeviceConfig
     {
         uint64_t baseAddress;
-        uint64_t PCISegGroup;
+        uint16_t PCISegGroup;
         uint8_t startBus;
         uint8_t endBus;
         uint32_t reserved;
-    }__attribute__((packed));
+     }__attribute__((packed));
 
     void* findTable(SDTHeader* header, char* tableName);
 }

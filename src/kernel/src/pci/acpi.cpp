@@ -2,18 +2,18 @@
 
 namespace ACPI
 {
-    void* findTable(SDTHeader* header, char* tableName)
-    {
-        int entries = (header->length - sizeof(ACPI::SDTHeader)) / 8;
-        for(int i = 0; i < entries; i++)
-        {
-            ACPI::SDTHeader* nextHeader = (SDTHeader*)*(uint64_t*)((uint64_t)header + sizeof(SDTHeader) + (i * 8));
-            for(int j = 0; j < 4; j++)
-            {
-                if(tableName[j] != nextHeader->signature[j])
+    void* findTable(SDTHeader* sdtHeader, char* signature){
+
+        int entries = (sdtHeader->length - sizeof(ACPI::SDTHeader)) / 8;
+
+        for (int t = 0; t < entries; t++){
+            ACPI::SDTHeader* newSDTHeader = (ACPI::SDTHeader*)*(uint64_t*)((uint64_t)sdtHeader + sizeof(ACPI::SDTHeader) + (t * 8));
+            for (int i = 0; i < 4; i++){
+                if (newSDTHeader->signature[i] != signature[i])
+                {
                     break;
-                if(j == 3)
-                    return (void*)nextHeader;
+                }
+                if (i == 3) return newSDTHeader;
             }
         }
         return 0;

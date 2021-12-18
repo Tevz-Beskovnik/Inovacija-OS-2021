@@ -1,7 +1,9 @@
 #include "kernelUtil.h"
 
 KernelInfo kernelInfo; 
-PageTableManager pageTableManager = NULL;
+
+void prepareACPI(BootInfo* bootInfo);
+
 void PrepareMemory(BootInfo* bootInfo){
     uint64_t mMapEntries = bootInfo->mMapSize / bootInfo->mMapDescSize;
 
@@ -16,22 +18,22 @@ void PrepareMemory(BootInfo* bootInfo){
     PageTable* PML4 = (PageTable*)GLOBAL_ALLOCATOR.RequestPage();
     memset(PML4, 0, 0x1000);
 
-    pageTableManager = PageTableManager(PML4);
+    GLOBAL_PAGE_MANAGER = PageTableManager(PML4);
 
     for (uint64_t t = 0; t < GetMemorySize(bootInfo->mMap, mMapEntries, bootInfo->mMapDescSize); t+= 0x1000){
-        pageTableManager.MapMemory((void*)t, (void*)t);
+        GLOBAL_PAGE_MANAGER.MapMemory((void*)t, (void*)t);
     }
 
     uint64_t fbBase = (uint64_t)bootInfo->framebuffer->BaseAddress;
     uint64_t fbSize = (uint64_t)bootInfo->framebuffer->BufferSize + 0x1000;
     GLOBAL_ALLOCATOR.LockPages((void*)fbBase, fbSize/ 0x1000 + 1);
     for (uint64_t t = fbBase; t < fbBase + fbSize; t += 4096){
-        pageTableManager.MapMemory((void*)t, (void*)t);
+        GLOBAL_PAGE_MANAGER.MapMemory((void*)t, (void*)t);
     }
 
     asm ("mov %0, %%cr3" : : "r" (PML4));
 
-    kernelInfo.pageTableManager = &pageTableManager;
+    kernelInfo.pageTableManager = &GLOBAL_PAGE_MANAGER;
 }
 
 IDTR idtr;
@@ -43,7 +45,7 @@ void setIDTGate(void* handler, uint8_t entryOffset, uint8_t type_attr, uint8_t s
     interruptEntry->selector = selector;
 }
 
-void PrepareInterrupts(){
+void PrepareInterrupts(BootInfo* bootInfo){
     idtr.Limit = 0x0FFF;
     idtr.Offset = (uint64_t)GLOBAL_ALLOCATOR.RequestPage();
 
@@ -64,6 +66,8 @@ void PrepareInterrupts(){
         PS2Mouse();
     #endif
 
+    prepareACPI(bootInfo);
+
     outb(PIC1_DATA, 0b11111001);
     outb(PIC2_DATA, 0b11101111);
 
@@ -75,11 +79,8 @@ void prepareACPI(BootInfo* bootInfo)
     ACPI::SDTHeader* xsdt = (ACPI::SDTHeader*)(bootInfo->rsdp->XSDTAddress);
 
     ACPI::MCFGHeader* mcfg = (ACPI::MCFGHeader*)ACPI::findTable(xsdt, (char*)"MCFG");
-    for(int i = 0; i < 4; i++)
-    {
-        GLOBAL_RENDERER->PutChar(mcfg->header.signature[i]);
-    }
-    GLOBAL_RENDERER->Next();
+
+    PCI::enumeratePCI(mcfg);
 }
 
 BasicRenderer r = BasicRenderer(NULL, NULL);
@@ -96,9 +97,7 @@ KernelInfo InitializeKernel(BootInfo* bootInfo){
 
     memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
 
-    PrepareInterrupts();
-
-    prepareACPI(bootInfo);
+    PrepareInterrupts(bootInfo);
 
     return kernelInfo;
 }

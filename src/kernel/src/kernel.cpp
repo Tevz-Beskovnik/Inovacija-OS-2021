@@ -10,7 +10,7 @@ extern "C" void _start(BootInfo* bootInfo){
 
     GLOBAL_RENDERER->Next();
 
-    GLOBAL_RENDERER->Print(to_hstring((uint64_t)bootInfo->rsdp, (int)32));
+    GLOBAL_RENDERER->Print(to_hstring((uint64_t)bootInfo->rsdp));
 
     GLOBAL_RENDERER->Next();
 
