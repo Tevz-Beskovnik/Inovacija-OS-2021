@@ -14,9 +14,13 @@
  - **Master boot record**: https://en.wikipedia.org/wiki/Master_boot_record *6. 10. 2021*
  - **Makefile tutorial**: https://makefiletutorial.com/ *6. 10. 2021*
  - **Bootloader but in nasm**: https://github.com/FRosner/FrOS/blob/minimal-c-kernel/mbr.asm *7. 10. 2021*
- - **Writting a simple operating system - from scratch**: https://github.com/shekohex/my-free-eBooks/blob/master/System-Design/OS-Dev.pdf *11. 10. 2021*
+ - **os-dev.pdf**: https://github.com/shekohex/my-free-eBooks/blob/master/System-Design/OS-Dev.pdf *11. 10. 2021*
  - **Interrupt descriptor table**: https://wiki.osdev.org/Interrupt_Descriptor_Table *18. 10. 2021*
  - **Entering 32 bit protected mode**: https://www.youtube.com/watch?v=pXzortxPZR8&t=5s *26. 10. 2021*
  - **Entering long mode**: https://wiki.osdev.org/Setting_Up_Long_Mode#Entering_the_64-bit_Submode *27. 10. 2021*
  - **AMD64 architecture programers manual volume 2**: https://www.amd.com/system/files/TechDocs/24593.pdf *28. 10. 2021*
  - **OSDEV**: https://github.com/lja83/OSDEV *17. 10. 2021*
+ - **Floating point standard:**: https://en.wikipedia.org/wiki/IEEE_754 *22. 11. 2021*
+ - **Double percision floating point standard**: https://en.wikipedia.org/wiki/Double-precision_floating-point_format *22. 11. 2021*
+ - **Enabling SSE**: https://wiki.osdev.org/SSE *22. 11. 2021*
+ - **Exceptions**: https://wiki.osdev.org/Exceptions *10. 12. 2021*

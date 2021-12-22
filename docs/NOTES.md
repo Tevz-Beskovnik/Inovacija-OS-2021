@@ -73,3 +73,35 @@
 
  - **0x7C00** address sapce where the bootloader is contained,
  - **0x7E00** address where the sections of the bootloader to switch to 32 bit protected mode and 64 bit long mode + kernel and everything else
+
+## floating point and double standard floating point number standards:
+
+ - **float**:
+ - *31st bit* signed bit (for positive or negative numbers)
+ - *30th - 23rd bit (8 bits)* exponent
+ - *lowe 23 bits* fraction
+ 
+ - **double**:
+ - *63rd bit* signed bit (to represent a positiv (low) or negative (high) value)
+ - *62nd - 52nd bit* exponent
+ - *lower 52 bits* fraction
+
+
+## floating point numbers conversions (casts) do not work by default so you have to enable the SSE (Streaming SIMD Extensions)
+
+## memory addressing for dynamic memory allocation:
+
+ - **paging** currently paging is set up to be 4 layered
+ - **memory address accessing** before paging setup memory can only be addressed up to 0x00200000 (0x200000)
+
+ ## memory pagging 
+
+    (Intel already has plans for 5 level paging (not sure if its already in use :shrug:) but i'll try to add it in when it out)
+  - **4 level memory paging**:
+  - *PML4 Table* holds 512 entires of PDP Table
+  - *PDP Table* Page directory pointer table holds 512 page directory tables
+  - *PD Table* Page Directory Table holds 512 page tables
+  - *P Table* holds the physical pages a.k.a. page entries
+  - *Page* the memory page has a size of 4096 bytes
+    also hold a structure that the memory managment unit on the proccessor can access
+    layout of the struct has 52 bits assigned to Address 3 bits for the programer to use and 9 bits for Attributes (readable writtable, is it present, is it cached, ect...) When the struct is used as a page directory the address points to the next physical address of the page table
