@@ -32,6 +32,12 @@ __attribute__((interrupt)) void MouseInt_Handler(struct interrupt_frame* frame){
     PIC_EndSlave();
 }
 
+__attribute__((interrupt)) void PIT_Handler(struct interrupt_frame* frame)
+{
+    PIT::tick();
+    PIC_EndMaster();
+}
+
 void PIC_EndMaster(){
     outb(PIC1_COMMAND, PIC_EOI);
 }

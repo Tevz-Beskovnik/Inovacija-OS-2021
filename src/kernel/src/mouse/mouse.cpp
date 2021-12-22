@@ -40,23 +40,24 @@ bool packetReady = false;
 Point mousePosition;
 void handleMouse(uint8_t data)
 {
+    processMousePacket();
+    static bool skip = true;
+    if(skip) { skip = false; return; }
+
     switch (mouseCycle)
     {
     case 0:
-        if(packetReady) break;
-        if(data & 0b00001000 == 0) break;
+        if((data & 0b00001000) == 0) break;
         mousePackets[0] = data;
         mouseCycle++;
         break;
     
     case 1:
-        if(packetReady) break;
         mousePackets[1] = data;
         mouseCycle++;
         break;
 
     case 2:
-        if(packetReady) break;
         mousePackets[2] = data;
         packetReady = true;
         mouseCycle = 0; 

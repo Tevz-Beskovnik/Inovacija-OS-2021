@@ -53,6 +53,7 @@ void PrepareInterrupts(BootInfo* bootInfo){
     setIDTGate((void*)DoubleFault_Handler, 0x8, IDT_TA_InterruptGate, 0x08);
     setIDTGate((void*)GPFault_Handler, 0xD, IDT_TA_InterruptGate, 0x08);
     setIDTGate((void*)KeyboardInt_Handler, 0x21, IDT_TA_InterruptGate, 0x08);
+    setIDTGate((void*)PIT_Handler, 0x20, IDT_TA_InterruptGate, 0x08);
     
     #ifdef MOUSE_ENABLE
         setIDTGate((void*)MouseInt_Handler, 0x2C, IDT_TA_InterruptGate, 0x08);
@@ -68,7 +69,7 @@ void PrepareInterrupts(BootInfo* bootInfo){
 
     prepareACPI(bootInfo);
 
-    outb(PIC1_DATA, 0b11111001);
+    outb(PIC1_DATA, 0b11111000);
     outb(PIC2_DATA, 0b11101111);
 
     asm ("sti");
@@ -96,6 +97,8 @@ KernelInfo InitializeKernel(BootInfo* bootInfo){
     PrepareMemory(bootInfo);
 
     memset(bootInfo->framebuffer->BaseAddress, 0, bootInfo->framebuffer->BufferSize);
+
+    initHeap((void*)0x0000100000000000, 0x10);
 
     PrepareInterrupts(bootInfo);
 

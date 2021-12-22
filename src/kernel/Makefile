@@ -63,7 +63,9 @@ buildimg:
 
 clear:
 	rm ./lib/*.o
+	rm ./lib/*/*/*.o
 	rm ./lib/*/*.o
+	rmdir ./lib/*/*/
 	rmdir ./lib/*/
 	rm ./bin/*.img
 	rm ./bin/*.elf

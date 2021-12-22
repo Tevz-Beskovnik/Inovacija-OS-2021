@@ -1,6 +1,7 @@
 #pragma once
 #include "../print.h"
 #include "../mouse/mouse.h"
+#include "../timers/PIT/pit.h"
 
 #define PIC1_COMMAND 0x20
 #define PIC1_DATA 0x21
@@ -18,6 +19,7 @@ __attribute__((interrupt)) void DoubleFault_Handler(struct interrupt_frame* fram
 __attribute__((interrupt)) void GPFault_Handler(struct interrupt_frame* frame);
 __attribute__((interrupt)) void KeyboardInt_Handler(struct interrupt_frame* frame);
 __attribute__((interrupt)) void MouseInt_Handler(struct interrupt_frame* frame);
+__attribute__((interrupt)) void PIT_Handler(struct interrupt_frame* frame);
 
 void RemapPIC();
 void PIC_EndMaster();
