@@ -1,5 +1,5 @@
 
-OSNAME = CustomOS
+OSNAME = CustomOS1
 
 GNUEFI = ../gnu-efi
 OVMFDIR = ../OVMFbin
@@ -52,14 +52,14 @@ setup:
 	@mkdir $(OBJDIR)
 
 buildimg:
-	dd if=/dev/zero of=$(BUILDDIR)/$(OSNAME).img bs=512 count=93750
-	mformat -i $(BUILDDIR)/$(OSNAME).img -f 1440 ::
-	mmd -i $(BUILDDIR)/$(OSNAME).img ::/EFI
-	mmd -i $(BUILDDIR)/$(OSNAME).img ::/EFI/BOOT
-	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BOOTEFI) ::/EFI/BOOT
-	mcopy -i $(BUILDDIR)/$(OSNAME).img startup.nsh ::
-	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/kernel.elf ::
-	mcopy -i $(BUILDDIR)/$(OSNAME).img $(BUILDDIR)/zap-light16.psf ::
+	dd if=/dev/zero of=$(BUILDDIR)/$(OSNAME).iso bs=512 count=93750
+	mformat -i $(BUILDDIR)/$(OSNAME).iso -f 1440 ::
+	mmd -i $(BUILDDIR)/$(OSNAME).iso ::/EFI
+	mmd -i $(BUILDDIR)/$(OSNAME).iso ::/EFI/BOOT
+	mcopy -i $(BUILDDIR)/$(OSNAME).iso $(BOOTEFI) ::/EFI/BOOT
+	mcopy -i $(BUILDDIR)/$(OSNAME).iso startup.nsh ::
+	mcopy -i $(BUILDDIR)/$(OSNAME).iso $(BUILDDIR)/kernel.elf ::
+	mcopy -i $(BUILDDIR)/$(OSNAME).iso $(BUILDDIR)/zap-light16.psf ::
 
 clear:
 	rm ./lib/*.o
@@ -67,10 +67,10 @@ clear:
 	rm ./lib/*/*.o
 	rmdir ./lib/*/*/
 	rmdir ./lib/*/
-	rm ./bin/*.img
+	rm ./bin/*.iso
 	rm ./bin/*.elf
 
 build: kernel buildimg
 
 run:
-	qemu-system-x86_64 -machine q35 -drive file=$(BUILDDIR)/$(OSNAME).img -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="$(OVMFDIR)/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="$(OVMFDIR)/OVMF_VARS-pure-efi.fd" -net none
+	qemu-system-x86_64 -drive file=$(BUILDDIR)/$(OSNAME).iso -m 256M -cpu qemu64 -drive if=pflash,format=raw,unit=0,file="$(OVMFDIR)/OVMF_CODE-pure-efi.fd",readonly=on -drive if=pflash,format=raw,unit=1,file="$(OVMFDIR)/OVMF_VARS-pure-efi.fd" -net none

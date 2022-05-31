@@ -4,8 +4,12 @@
 
 class Bitmap{
     public:
-    size_t Size;
-    uint8_t* Buffer;
-    bool operator[](uint64_t index);
-    bool Set(uint64_t index, bool value);
+        size_t Size;
+        uint8_t* Buffer;
+
+        bool operator[](uint64_t index);
+
+        bool Set(uint64_t index, bool value);
+
+        bool get(uint64_t index);
 };

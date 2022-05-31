@@ -24,3 +24,4 @@
  - **Double percision floating point standard**: https://en.wikipedia.org/wiki/Double-precision_floating-point_format *22. 11. 2021*
  - **Enabling SSE**: https://wiki.osdev.org/SSE *22. 11. 2021*
  - **Exceptions**: https://wiki.osdev.org/Exceptions *10. 12. 2021*
+ - **AHCI / SATA READING**: https://wiki.osdev.org/AHCI *26. 12. 2021*

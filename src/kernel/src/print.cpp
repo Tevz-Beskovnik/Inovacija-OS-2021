@@ -58,7 +58,6 @@ void BasicRenderer::Next(){
 
 void BasicRenderer::Print(const char* str)
 {
-    
     char* chr = (char*)str;
     while(*chr != 0){
         PutChar(*chr, CursorPosition.X, CursorPosition.Y);
@@ -74,7 +73,6 @@ void BasicRenderer::Print(const char* str)
 
 void BasicRenderer::Print(uint32_t color, const char* str)
 {
-    
     char* chr = (char*)str;
     while(*chr != 0){
         PutChar(color, *chr, CursorPosition.X, CursorPosition.Y);
@@ -102,6 +100,8 @@ void BasicRenderer::PutChar(char chr, unsigned int xOff, unsigned int yOff)
         fontPtr++;
     }
 }
+
+
 
 void BasicRenderer::PutChar(uint32_t color, char chr, unsigned int xOff, unsigned int yOff)
 {
@@ -134,6 +134,55 @@ void BasicRenderer::PutChar(uint32_t color, char chr)
     CursorPosition.X += 8;
     if (CursorPosition.X + 8 > TargetFramebuffer->Width){
         CursorPosition.X = 0; 
+        CursorPosition.Y += 16;
+    }
+}
+
+void BasicRenderer::DrawRectange(uint32_t x1, uint32_t y1, uint32_t x2, uint32_t y2, uint32_t color)
+{
+    uint64_t fbBase = (uint64_t)TargetFramebuffer->BaseAddress;
+    uint64_t bytesPerScanline = TargetFramebuffer->PixelsPerScanLine * 4;
+    uint64_t fbHeight = TargetFramebuffer->Height;
+    uint64_t fbSize = TargetFramebuffer->BufferSize;
+
+    for(uint32_t verticalScanline = y1; verticalScanline < y2; verticalScanline++)
+    {
+        uint64_t pixPtrBase = fbBase + (bytesPerScanline * verticalScanline);
+        for (uint32_t* pixPtr = (uint32_t*)pixPtrBase + x1; pixPtr < (uint32_t*)(pixPtrBase + x1 + x2); pixPtr ++)
+            *pixPtr = color;
+    }
+}
+
+void BasicRenderer::Println(const char* str)
+{
+    char* chr = (char*)str;
+    while(*chr != 0){
+        PutChar(*chr, CursorPosition.X, CursorPosition.Y);
+        CursorPosition.X+=8;
+        if(CursorPosition.X + 8 > TargetFramebuffer->Width)
+        {
+            CursorPosition.X = 0;
+            CursorPosition.Y += 16;
+        }
+        chr++;
+    }
+    CursorPosition.X = 0;
+    CursorPosition.Y += 16;
+}
+
+void BasicRenderer::Println(uint32_t color, const char* str)
+{
+    char* chr = (char*)str;
+    while(*chr != 0){
+        PutChar(color, *chr, CursorPosition.X, CursorPosition.Y);
+        CursorPosition.X+=8;
+        if(CursorPosition.X + 8 > TargetFramebuffer->Width)
+        {
+            CursorPosition.X = 0;
+            CursorPosition.Y += 16;
+        }
+        chr++;
+        CursorPosition.X = 0;
         CursorPosition.Y += 16;
     }
 }

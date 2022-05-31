@@ -25,13 +25,6 @@ __attribute__((interrupt)) void KeyboardInt_Handler(struct interrupt_frame* fram
     PIC_EndMaster();
 }
 
-__attribute__((interrupt)) void MouseInt_Handler(struct interrupt_frame* frame){
-    uint8_t mouseData = inb(0x60);
-    handleMouse(mouseData);
-
-    PIC_EndSlave();
-}
-
 __attribute__((interrupt)) void PIT_Handler(struct interrupt_frame* frame)
 {
     PIT::tick();

@@ -156,3 +156,42 @@ const char* to_string(double value, uint8_t decimalPlaces){
 const char* to_string(double value){
     return to_string(value, 2);
 }
+
+void strcpy(char* p1, char* p2, uint8_t len)
+{
+    for(uint8_t i = 0; i < len; i++)
+    {
+        *p1 = *p2;
+        p1++;
+        p2++;
+    }
+}
+
+bool strcmp(const char* p1, const char* p2, uint8_t len)
+{
+    for(uint8_t i = 0; i < len; i++)
+    {
+        if(*p1 != *p2)
+            return false;
+        p1++;
+        p2++;
+    }
+    return true;
+}
+
+void strclr(char* p, int len)
+{
+    for(int i = 0; i < len; i++)
+        *p++ = (char)0;
+}
+
+int atoi(const char* p, uint8_t len) 
+{
+    int value = 0;
+    for(uint8_t i = 0; i < len; i++) 
+    {
+        value *= 10;
+        value += (int)((int)(*p++)-(int)'0');
+    }
+    return value;
+}
